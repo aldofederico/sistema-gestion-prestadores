@@ -1,109 +1,192 @@
 # Sistema de Gestión de Prestadores
 
-Aplicación funcional completa para gestionar prestadores. Incluye interfaz React
-responsive, API Express, persistencia PostgreSQL, migraciones, seed y pruebas
-automatizadas de frontend y backend.
+## Objetivo funcional
 
-## Stack y arquitectura
+Aplicación web para administrar prestadores de salud mediante una interfaz
+responsive y una API REST con persistencia PostgreSQL.
 
-- React, TypeScript, Vite y Material UI.
-- Node.js, Express, Zod y Prisma.
-- PostgreSQL.
-- Docker Compose con dos servicios: `app` y `db`.
+## Funcionalidades implementadas
 
-El contenedor `app` sirve la API y el frontend compilado desde un único origen.
-PostgreSQL permanece accesible solo dentro de la red de Compose.
+- Listado, búsqueda parcial por CUIT o razón social y filtro por estado.
+- Paginación estable de resultados.
+- Alta y edición de prestadores.
+- Baja lógica y reactivación con confirmación.
+- Validaciones de formulario y respuestas de error uniformes.
+- Tabla en escritorio y tarjetas en dispositivos móviles.
+- Health check con verificación real de la conexión a PostgreSQL.
 
-## Requisitos y ejecución principal
+## Stack
 
-- Node.js 24.x y npm.
-- Docker Engine con Docker Compose.
+- Frontend: React, TypeScript, Vite, Material UI, React Hook Form y Zod.
+- Backend: Node.js, Express, TypeScript, Zod y Prisma.
+- Persistencia: PostgreSQL.
+- Pruebas: Vitest, React Testing Library y Supertest.
+- Infraestructura local: Docker Compose.
+
+## Arquitectura
+
+Docker Compose contiene exactamente dos servicios:
+
+- `app`: construye el frontend, ejecuta Express y publica el puerto `3000`.
+- `db`: ejecuta PostgreSQL dentro de la red privada de Compose.
+
+Express sirve `/api/*`, los archivos compilados del frontend y el fallback de la
+SPA desde el mismo origen. PostgreSQL no publica el puerto `5432` al host en la
+ejecución principal.
+
+## Requisitos previos
+
+- Docker Desktop iniciado, con Docker Compose disponible.
+- Node.js 24.x y npm para ejecutar comandos de calidad fuera de Docker.
+
+## Ejecución principal
 
 ```powershell
 docker compose up --build
 ```
 
-La primera construcción puede demorar por la descarga de imágenes y
-dependencias. Una vez saludable:
+La primera construcción puede demorar mientras Docker descarga las imágenes e
+instala las dependencias. Cuando ambos servicios estén saludables:
 
-- Frontend: <http://localhost:3000>
+- Aplicación: <http://localhost:3000>
 - Health: <http://localhost:3000/api/health>
 
-Para detener los servicios y conservar los datos:
+Para detener los servicios y conservar la base:
 
 ```powershell
 docker compose down
 ```
 
-## Comandos npm
+Para borrar únicamente los datos Docker de este proyecto y reconstruir desde
+cero:
+
+```powershell
+docker compose down -v
+docker compose up --build
+```
+
+## Datos iniciales
+
+El arranque aplica las migraciones y ejecuta un seed idempotente. El seed crea
+tres prestadores ficticios mediante `upsert` por CUIT: dos activos y uno
+inactivo. Ejecutarlo nuevamente no duplica registros.
+
+El estado inicial de un prestador nuevo es `ACTIVE`. Un prestador desactivado
+permanece físicamente almacenado y puede reactivarse.
+
+## Comandos de calidad
 
 | Comando | Propósito |
 | --- | --- |
-| `npm.cmd run dev` | Frontend y backend en desarrollo |
-| `npm.cmd run clean` | Elimina artefactos de compilación |
-| `npm.cmd run build` | Compila frontend y backend |
-| `npm.cmd start` | Inicia el backend compilado |
-| `npm.cmd run lint` | Analiza el repositorio |
-| `npm.cmd run typecheck` | Valida TypeScript estricto |
-| `npm.cmd run test:unit` | Ejecuta las pruebas rápidas de frontend y health |
-| `npm.cmd test` | Ejecuta la suite completa con PostgreSQL aislado |
+| `npm.cmd ci` | Instala exactamente las dependencias del lockfile |
 | `npm.cmd run db:generate` | Genera Prisma Client |
-| `npm.cmd run db:migrate:deploy` | Aplica migraciones pendientes |
-| `npm.cmd run db:seed` | Ejecuta el seed idempotente |
-| `npm.cmd run docker:up` | Construye e inicia Compose |
-| `npm.cmd run docker:down` | Detiene Compose |
-
-## Interfaz funcional
-
-En <http://localhost:3000> se puede listar, buscar, filtrar y paginar
-prestadores; crear y editar sus datos; y confirmar su desactivación o
-reactivación. La búsqueda aplica debounce de 300 ms y la presentación utiliza
-una tabla en escritorio y tarjetas en móvil, sin depender de scroll horizontal.
-Los formularios muestran validaciones locales y errores uniformes del servidor.
-## API de prestadores
-
-La API funcional está disponible bajo `/api/providers`:
-
-| Método | Ruta | Responsabilidad |
-| --- | --- | --- |
-| `GET` | `/api/providers` | Listado, búsqueda, filtro y paginación |
-| `POST` | `/api/providers` | Alta con estado inicial `ACTIVE` |
-| `PUT` | `/api/providers/:id` | Reemplazo de campos editables |
-| `PATCH` | `/api/providers/:id/status` | Baja lógica o reactivación |
-
-Ejemplos: `/api/providers?search=20-123&page=1&pageSize=10` y
-`/api/providers?status=ACTIVE&page=1&pageSize=10`. El listado devuelve
-`{"items":[],"pagination":{"page":1,"pageSize":10,"totalItems":0,"totalPages":0}}`.
-Los errores usan
-`{"error":{"code":"STABLE_ERROR_CODE","message":"Mensaje legible","details":{}}}`.
-No existe endpoint `DELETE`.
-
-Las pruebas completas se ejecutan con `npm.cmd test`. El orquestador inicia el
-servicio `db`, crea si hace falta la base lógica aislada `providers_test`, aplica
-migraciones, ejecuta Vitest y detiene los recursos de test conservando el
-volumen. La base `providers` no se utiliza en pruebas de integración.
-
-## Persistencia
-
-Las migraciones versionadas viven en `prisma/migrations`. Al iniciar el
-contenedor, primero se ejecuta `prisma migrate deploy`, luego el seed idempotente
-y, solo si ambos terminan bien, Express. El seed crea tres prestadores ficticios
-mediante `upsert` por CUIT.
+| `npm.cmd run lint` | Ejecuta ESLint |
+| `npm.cmd run typecheck` | Valida TypeScript estricto |
+| `npm.cmd run test:unit` | Ejecuta pruebas rápidas de frontend y health |
+| `npm.cmd test` | Ejecuta la suite completa con PostgreSQL aislado |
+| `npm.cmd run build` | Compila frontend y backend |
+| `npm.cmd audit --audit-level=high` | Audita vulnerabilidades de dependencias |
 
 ## Pruebas
 
-Vitest y React Testing Library cubren carga, búsqueda, filtros, paginación,
-formularios, validaciones, mutaciones, feedback y vistas responsive. La suite
-completa conserva además las pruebas de integración reales contra PostgreSQL.
+`npm.cmd test` levanta PostgreSQL con `compose.test.yaml`, crea la base lógica
+aislada `providers_test`, aplica las migraciones y ejecuta Vitest. La base de
+desarrollo `providers` no se usa en las pruebas de integración.
 
-## Estructura
+Las pruebas cubren health, validaciones, contratos API, persistencia, búsqueda,
+filtros, paginación, formularios, mutaciones, feedback y variantes responsive.
+El checklist manual reutilizable está en
+[`docs/ACCEPTANCE_CHECKLIST.md`](docs/ACCEPTANCE_CHECKLIST.md).
 
-- `client/`: aplicación React.
-- `server/`: aplicación Express y prueba de health.
-- `prisma/`: esquema, migraciones y seed.
-- `scripts/`: limpieza multiplataforma e inicio del contenedor.
+## API
 
-## Limitaciones actuales
+| Método | Ruta | Responsabilidad |
+| --- | --- | --- |
+| `GET` | `/api/health` | Estado del proceso y conectividad de base |
+| `GET` | `/api/providers` | Listado, búsqueda, filtro y paginación |
+| `POST` | `/api/providers` | Alta con estado inicial `ACTIVE` |
+| `PUT` | `/api/providers/:id` | Reemplazo de los campos editables |
+| `PATCH` | `/api/providers/:id/status` | Baja lógica o reactivación |
 
-No existe eliminación física ni endpoint `DELETE`. Deliberadamente no se incluyen
-routing, autenticación, Swagger, CI/CD ni despliegue.
+Ejemplos:
+
+- `/api/providers?search=30-700&page=1&pageSize=10`
+- `/api/providers?status=ACTIVE&page=1&pageSize=10`
+
+Contrato paginado:
+
+```json
+{
+  "items": [],
+  "pagination": {
+    "page": 1,
+    "pageSize": 10,
+    "totalItems": 0,
+    "totalPages": 0
+  }
+}
+```
+
+Contrato de error:
+
+```json
+{
+  "error": {
+    "code": "STABLE_ERROR_CODE",
+    "message": "Mensaje legible",
+    "details": {}
+  }
+}
+```
+
+No existe endpoint `DELETE`.
+
+## Validaciones
+
+- CUIT obligatorio, único y normalizado a exactamente 11 dígitos.
+- No se valida el dígito verificador del CUIT.
+- Razón social obligatoria.
+- Correo electrónico obligatorio, válido y normalizado a minúsculas.
+- Campos opcionales vacíos almacenados como `null`.
+- Estado admitido: `ACTIVE` o `INACTIVE`.
+- `POST` fuerza el estado inicial `ACTIVE`.
+- `PUT` no acepta ni modifica el estado.
+- Solo `PATCH /api/providers/:id/status` cambia el estado.
+- Paginación por defecto: `page=1`, `pageSize=10`; máximo: `100`.
+- Orden estable: razón social ascendente e identificador ascendente.
+
+## Estructura del repositorio
+
+```text
+client/             Interfaz React
+server/             API Express y pruebas del servidor
+prisma/             Esquema, migraciones y seed
+scripts/            Arranque, limpieza y orquestación de pruebas
+compose.yaml        Ejecución principal
+compose.test.yaml   Exposición aislada de PostgreSQL para pruebas
+Dockerfile          Build multietapa y runtime de producción
+```
+
+## Decisiones técnicas
+
+- Un solo proyecto npm y un único origen HTTP reducen la configuración local.
+- El frontend usa `fetch` nativo y cancela búsquedas obsoletas.
+- La búsqueda aplica debounce de 300 ms.
+- Las migraciones y el seed se ejecutan antes de iniciar Express.
+- La baja es lógica para conservar trazabilidad y permitir reactivación.
+- La base de pruebas está aislada de los datos de desarrollo.
+
+## Troubleshooting
+
+- Si Docker no responde, iniciar Docker Desktop y repetir el comando principal.
+- Si el puerto `3000` está ocupado, liberar ese puerto antes de iniciar Compose.
+- Para inspeccionar salud y logs: `docker compose ps` y
+  `docker compose logs --no-color`.
+- Si una base local descartable quedó inconsistente, ejecutar
+  `docker compose down -v` y reconstruir.
+
+## Limitaciones deliberadas
+
+El alcance no incluye autenticación, autorización, Swagger, routing frontend,
+CI/CD ni despliegue. No existe eliminación física ni endpoint `DELETE`.
+Swagger no forma parte del challenge y la autenticación no fue requerida.
