@@ -1,9 +1,8 @@
 # Sistema de Gestión de Prestadores
 
-Fundación reproducible para una aplicación de gestión de prestadores. Esta etapa
-deja operativos el frontend, el backend, la persistencia, las migraciones, el
-seed y las verificaciones de calidad; todavía no implementa la gestión de
-prestadores.
+Aplicación funcional completa para gestionar prestadores. Incluye interfaz React
+responsive, API Express, persistencia PostgreSQL, migraciones, seed y pruebas
+automatizadas de frontend y backend.
 
 ## Stack y arquitectura
 
@@ -46,13 +45,21 @@ docker compose down
 | `npm.cmd start` | Inicia el backend compilado |
 | `npm.cmd run lint` | Analiza el repositorio |
 | `npm.cmd run typecheck` | Valida TypeScript estricto |
-| `npm.cmd test` | Ejecuta las pruebas una vez |
+| `npm.cmd run test:unit` | Ejecuta las pruebas rápidas de frontend y health |
+| `npm.cmd test` | Ejecuta la suite completa con PostgreSQL aislado |
 | `npm.cmd run db:generate` | Genera Prisma Client |
 | `npm.cmd run db:migrate:deploy` | Aplica migraciones pendientes |
 | `npm.cmd run db:seed` | Ejecuta el seed idempotente |
 | `npm.cmd run docker:up` | Construye e inicia Compose |
 | `npm.cmd run docker:down` | Detiene Compose |
 
+## Interfaz funcional
+
+En <http://localhost:3000> se puede listar, buscar, filtrar y paginar
+prestadores; crear y editar sus datos; y confirmar su desactivación o
+reactivación. La búsqueda aplica debounce de 300 ms y la presentación utiliza
+una tabla en escritorio y tarjetas en móvil, sin depender de scroll horizontal.
+Los formularios muestran validaciones locales y errores uniformes del servidor.
 ## API de prestadores
 
 La API funcional está disponible bajo `/api/providers`:
@@ -75,6 +82,7 @@ Las pruebas completas se ejecutan con `npm.cmd test`. El orquestador inicia el
 servicio `db`, crea si hace falta la base lógica aislada `providers_test`, aplica
 migraciones, ejecuta Vitest y detiene los recursos de test conservando el
 volumen. La base `providers` no se utiliza en pruebas de integración.
+
 ## Persistencia
 
 Las migraciones versionadas viven en `prisma/migrations`. Al iniciar el
@@ -84,8 +92,9 @@ mediante `upsert` por CUIT.
 
 ## Pruebas
 
-Vitest ejecuta una prueba de integración del health check con Supertest y una
-prueba del frontend con React Testing Library.
+Vitest y React Testing Library cubren carga, búsqueda, filtros, paginación,
+formularios, validaciones, mutaciones, feedback y vistas responsive. La suite
+completa conserva además las pruebas de integración reales contra PostgreSQL.
 
 ## Estructura
 
@@ -96,6 +105,5 @@ prueba del frontend con React Testing Library.
 
 ## Limitaciones actuales
 
-La API de prestadores está completa. El frontend funcional continúa pendiente:
-no hay tabla, formularios, búsqueda visual, filtros, paginación visual ni routing.
-Tampoco se implementan autenticación, Swagger, CI/CD ni despliegue.
+No existe eliminación física ni endpoint `DELETE`. Deliberadamente no se incluyen
+routing, autenticación, Swagger, CI/CD ni despliegue.
