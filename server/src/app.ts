@@ -10,6 +10,7 @@ import {
   apiNotFound,
   errorHandler
 } from "./middleware/error-handler.js";
+import { providerRouter } from "./providers/provider.routes.js";
 
 export type CreateAppOptions = {
   healthChecker?: HealthChecker;
@@ -25,6 +26,7 @@ export const createApp = ({
   app.disable("x-powered-by");
   app.use(express.json());
   app.use("/api/health", createHealthRouter(healthChecker));
+  app.use("/api/providers", providerRouter);
   app.use("/api", apiNotFound);
 
   if (serveFrontend) {

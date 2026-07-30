@@ -53,6 +53,28 @@ docker compose down
 | `npm.cmd run docker:up` | Construye e inicia Compose |
 | `npm.cmd run docker:down` | Detiene Compose |
 
+## API de prestadores
+
+La API funcional está disponible bajo `/api/providers`:
+
+| Método | Ruta | Responsabilidad |
+| --- | --- | --- |
+| `GET` | `/api/providers` | Listado, búsqueda, filtro y paginación |
+| `POST` | `/api/providers` | Alta con estado inicial `ACTIVE` |
+| `PUT` | `/api/providers/:id` | Reemplazo de campos editables |
+| `PATCH` | `/api/providers/:id/status` | Baja lógica o reactivación |
+
+Ejemplos: `/api/providers?search=20-123&page=1&pageSize=10` y
+`/api/providers?status=ACTIVE&page=1&pageSize=10`. El listado devuelve
+`{"items":[],"pagination":{"page":1,"pageSize":10,"totalItems":0,"totalPages":0}}`.
+Los errores usan
+`{"error":{"code":"STABLE_ERROR_CODE","message":"Mensaje legible","details":{}}}`.
+No existe endpoint `DELETE`.
+
+Las pruebas completas se ejecutan con `npm.cmd test`. El orquestador inicia el
+servicio `db`, crea si hace falta la base lógica aislada `providers_test`, aplica
+migraciones, ejecuta Vitest y detiene los recursos de test conservando el
+volumen. La base `providers` no se utiliza en pruebas de integración.
 ## Persistencia
 
 Las migraciones versionadas viven en `prisma/migrations`. Al iniciar el
@@ -74,6 +96,6 @@ prueba del frontend con React Testing Library.
 
 ## Limitaciones actuales
 
-Solo existe `GET /api/health`. No hay endpoints de prestadores, tabla,
-formularios, búsqueda, filtros, paginación, routing, autenticación, Swagger,
-CI/CD ni despliegue. Esos módulos corresponden a próximas etapas.
+La API de prestadores está completa. El frontend funcional continúa pendiente:
+no hay tabla, formularios, búsqueda visual, filtros, paginación visual ni routing.
+Tampoco se implementan autenticación, Swagger, CI/CD ni despliegue.

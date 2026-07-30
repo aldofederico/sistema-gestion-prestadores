@@ -11,13 +11,16 @@ origen.
 
 ## Alcance funcional futuro
 
-`Provider` tendrá listado, búsqueda, filtros, paginación, alta, edición, baja
-lógica y reactivación. No implementar módulos futuros sin autorización.
+La API de `Provider` implementa listado, búsqueda, filtros, paginación, alta,
+edición, baja lógica y reactivación. El frontend funcional sigue pendiente. No
+implementar módulos futuros sin autorización.
 
 - CUIT obligatorio, único y normalizado a 11 dígitos.
 - Razón social y email válido son obligatorios.
 - Estado `ACTIVE` o `INACTIVE`; el inicial es `ACTIVE`.
 - No usar `DELETE`. La reactivación está permitida.
+- Endpoints definitivos: `GET /api/providers`, `POST /api/providers`,
+  `PUT /api/providers/:id` y `PATCH /api/providers/:id/status`.
 - `PUT` no cambia estado; solo `PATCH /api/providers/:id/status`.
 - Búsqueda parcial de razón social, insensible a mayúsculas.
 - Paginación: `page=1`, `pageSize=10`, máximo 100.

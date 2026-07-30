@@ -4,25 +4,14 @@ import type {
   Request,
   Response
 } from "express";
-
-export class AppError extends Error {
-  constructor(
-    public readonly status: number,
-    public readonly code: string,
-    message: string,
-    public readonly details: Record<string, unknown> = {}
-  ) {
-    super(message);
-    this.name = "AppError";
-  }
-}
+import { AppError } from "../errors/app-error.js";
 
 export const apiNotFound = (
   _request: Request,
   _response: Response,
   next: NextFunction
 ) => {
-  next(new AppError(404, "API_ROUTE_NOT_FOUND", "Ruta de API no encontrada."));
+  next(new AppError(404, "PROVIDER_NOT_FOUND", "Recurso no encontrado."));
 };
 
 export const errorHandler: ErrorRequestHandler = (
@@ -42,11 +31,22 @@ export const errorHandler: ErrorRequestHandler = (
           "Ocurrió un error interno inesperado."
         );
 
-  response.status(appError.status).json({
+  const body: {
+    error: {
+      code: string;
+      message: string;
+      details?: Record<string, unknown>;
+    };
+  } = {
     error: {
       code: appError.code,
-      message: appError.message,
-      details: appError.details
+      message: appError.message
     }
-  });
+  };
+
+  if (appError.details !== undefined) {
+    body.error.details = appError.details;
+  }
+
+  response.status(appError.status).json(body);
 };
