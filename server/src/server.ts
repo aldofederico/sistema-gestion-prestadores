@@ -4,7 +4,7 @@ import { prisma } from "./persistence/prisma.js";
 
 const app = createApp();
 
-const server = app.listen(env.PORT, () => {
+const server = app.listen(env.PORT, "0.0.0.0", () => {
   console.log(`Aplicación disponible en http://localhost:${env.PORT}`);
 });
 
