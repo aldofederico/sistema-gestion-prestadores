@@ -199,6 +199,8 @@ docs/testing/       Protocolos e informes de ejecución
 docs/process/       Logs y retrospectivas
 docs/product/       Historias, habilitadores y trazabilidad
 docs/v2/            Cambio y plan V2
+docs/deployment/    Procedimiento de despliegue de demostración
+render.yaml         Blueprint declarativo para Render
 ```
 
 ## Decisiones técnicas
@@ -209,6 +211,65 @@ docs/v2/            Cambio y plan V2
 - Las migraciones y el seed se ejecutan antes de iniciar Express.
 - La baja es lógica para conservar trazabilidad y permitir reactivación.
 - La base de pruebas está aislada de los datos de desarrollo.
+
+## Extras opcionales
+
+| Extra | Estado | Evidencia |
+|---|---|---|
+| Docker | Implementado | Dockerfile y Docker Compose |
+| Swagger | Implementado en V2.1 | OpenAPI y Swagger UI |
+| Diseño responsive | Implementado | Tabla desktop y tarjetas mobile |
+| Tests | Implementado | Suite automática y QA manual |
+| Deploy | Preparado, pendiente de publicación | render.yaml y guía Render |
+| Paginación | Implementado | Backend y frontend |
+| Variables de entorno | Implementado | .env.example y variables Render |
+
+## Mejoras adicionales y criterio
+
+- **Identificación y calidad de datos:** la máscara de CUIT mejora la lectura sin
+  cambiar el valor canónico; la normalización mantiene exactamente 11 dígitos y
+  permite buscar CUIT con o sin formato. La normalización del teléfono evita
+  caracteres inconsistentes y su tipo `string` preserva ceros iniciales.
+- **Ciclo de vida y contratos:** la reactivación hace reversible la baja lógica
+  sin perder trazabilidad. El contrato uniforme de errores permite que interfaz,
+  pruebas y consumidores interpreten de la misma forma validaciones, conflictos
+  y ausencias.
+- **Operabilidad y reproducibilidad:** el health check consulta PostgreSQL para
+  distinguir un proceso activo de un sistema realmente disponible. El dataset
+  determinista ofrece una base de evaluación repetible; el seed idempotente
+  evita duplicados y conserva registros ajenos para no destruir datos fuera de
+  su conjunto administrado.
+- **Experiencia e interacción:** el debounce reduce consultas mientras se
+  escribe y la cancelación de solicitudes obsoletas evita que respuestas tardías
+  reemplacen resultados más nuevos. La restauración de foco y la navegación por
+  teclado sostienen un flujo eficiente y accesible después de las mutaciones.
+- **Calidad y trazabilidad:** el QA manual documentado cubre comportamientos que
+  necesitan navegador y tamaños de pantalla. La trazabilidad y el protocolo
+  TP-006 dejan criterios previos, evidencia posterior y regresiones reproducibles
+  sin reescribir el cierre histórico.
+
+## Swagger y OpenAPI
+
+La documentación interactiva y la especificación explícita se sirven desde el
+mismo origen que la aplicación:
+
+- Swagger UI local: <http://localhost:3000/api/docs/>
+- OpenAPI JSON local: <http://localhost:3000/api/openapi.json>
+
+Swagger describe únicamente la API existente, no agrega autenticación ni
+endpoints de negocio y sirve sus activos desde la propia aplicación, sin CDN.
+
+## Deploy preparado
+
+El despliegue de demostración está preparado para Render, pero todavía no fue
+publicado ni tiene URL pública. `render.yaml` declara un Web Service Docker y
+Render Postgres separados del ambiente Docker Compose local. El procedimiento,
+los controles y el rollback están en
+[`docs/deployment/RENDER_DEPLOYMENT.md`](docs/deployment/RENDER_DEPLOYMENT.md).
+
+El plan gratuito implica suspensión por inactividad, arranque en frío, límites
+de uso y expiración de PostgreSQL; es una demo descartable, no infraestructura
+productiva.
 
 ## Troubleshooting
 
@@ -221,9 +282,11 @@ docs/v2/            Cambio y plan V2
 
 ## Limitaciones deliberadas
 
-El alcance no incluye autenticación, autorización, Swagger, routing frontend,
-CI/CD ni despliegue. No existe eliminación física ni endpoint `DELETE`.
-Swagger no forma parte del challenge y la autenticación no fue requerida.
+El alcance no incluye autenticación, autorización, eliminación física,
+routing frontend, CI/CD ni infraestructura productiva. No existe endpoint
+`DELETE`. La demo cloud está preparada, pero todavía no fue creada ni publicada;
+Swagger es documentación de la API pública y no mitiga la ausencia deliberada de
+controles de acceso.
 
 ## Fotografía histórica de V2
 
@@ -238,3 +301,11 @@ había sido fusionada ni publicada.
 
 El estado remoto vigente debe verificarse en GitHub y no inferirse únicamente
 de esta fotografía histórica.
+
+## V2.1 — mejoras posteriores al cierre de V2
+
+V2.1 agrega, después de la fotografía histórica anterior, OpenAPI 3.0.4,
+Swagger UI y la preparación declarativa de una demo en Render. También hace
+explícitos los extras opcionales y el criterio detrás de las mejoras ya
+implementadas. Estos cambios no reinterpretan el estado que tenía V2 en su
+cierre ni afirman que exista un despliegue público.
