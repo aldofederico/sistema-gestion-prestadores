@@ -1,6 +1,7 @@
 # Plan de implementación V2
 
-Estado: `EXECUTION_COMPLETE_PENDING_PUBLICATION`
+Estado alcanzado al cierre de V2-08 y revisado en V2-09/V2-09A:
+`EXECUTION_COMPLETE_PENDING_PUBLICATION`
 
 Las secciones de secuencia, impacto y commits previstos conservan el plan
 original. El apartado de ejecución al final distingue lo previsto de lo
@@ -106,9 +107,13 @@ Detener la implementación si se requiere una dependencia, migración, cambio de
 - Pruebas automatizadas y técnicas: completadas.
 - Auditoría desktop, mobile y accesibilidad: completada.
 - Documentación final: completada durante V2-08.
-- Publicación: todavía pendiente.
+- Publicación: no formó parte de V2-08, V2-09 ni V2-09A.
 - TP-006: `PASS_WITH_OBSERVATIONS`.
 - Defectos funcionales abiertos: ninguno.
+
+El plan conserva esta fotografía prepublicación por trazabilidad. El estado
+remoto posterior debe consultarse en GitHub o en el registro de la fase de
+publicación; este documento no afirma que la publicación continúe pendiente.
 
 ### Commits ejecutados
 

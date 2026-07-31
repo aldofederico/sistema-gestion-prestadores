@@ -21,6 +21,8 @@ Registrar procesos, tiempos confirmados, iteraciones, bloqueos y errores para so
 | Primer V2-07B | Codex local / Browser CDP | No registrado | No registrado | 1 min 38,047 s | 2 | 2 | 2 (`V2-07B-INF-01`, `V2-07B-DAT-01`) | BLOCKED | No aplica |
 | V2-07B-R | Cursor Browser | 2026-07-31 17:16 ART | 2026-07-31 17:22:52 ART | 6 min 52 s | 1 | 0 | 0 | COMPLETE | No aplica |
 | V2-08 | Codex local | 2026-07-31 17:33 ART | 2026-07-31 17:38:41 ART | Aproximadamente 5 min 41 s; inicio con precisión al minuto | 1 | 0 | 1 (`V2-08-INF-01`) | COMPLETE | `docs: finalize v2 validation and retrospective` |
+| V2-09 | Codex local | 2026-07-31 17:51:50.661 ART | 2026-07-31 18:01:02.341 ART | 9 min 11,680 s | 5 | 0 | 4 recuperados | COMPLETE | Ninguno |
+| V2-09A | Codex local | 2026-07-31 18:06:23.077 ART | 2026-07-31 18:17:02.088 ART | 10 min 39,011 s | 10 | 0 | 9 (`V2-09A-INF-01`, `V2-09A-OPS-01`) | COMPLETE | commit documental de la propia fase; consultar el primer commit posterior a `908aad6c` |
 
 ## Registro de errores confirmados
 
@@ -39,6 +41,8 @@ Registrar procesos, tiempos confirmados, iteraciones, bloqueos y errores para so
 | V2-07B-INF-01 | INF | EXTERNO | Browser/CDP de Codex falló dos veces con `windows sandbox: helper_unknown_error` | Sin navegación; primer V2-07B bloqueado | Reauditoría mediante Cursor Browser | Definir fallback Browser antes de comenzar |
 | V2-07B-DAT-01 | DAT | AMBIENTE | Existía un registro ajeno y el total físico era 31 | Línea base no válida para la campaña | Reset controlado restauró 30/20/10 | Verificar dataset antes de campañas |
 | V2-08-INF-01 | INF | EXTERNO | El sandbox de Windows no pudo lanzar una consulta Git de solo lectura | Una invocación fallida, sin cambios parciales | Se repitió la misma inspección con acceso local | Solicitar acceso local desde el inicio cuando el helper no pueda aislar filesystem |
+| V2-09A-INF-01 | INF | EXTERNO | El helper aislado de `apply_patch` y su wrapper externo no pudieron operar en Windows | Tres invocaciones fallidas, sin cambios parciales | Se cambió a generación y validación transaccional de contenido | Verificar disponibilidad del helper antes de iniciar la fase de escritura |
+| V2-09A-OPS-01 | OPS | PREVENIBLE | Los primeros fallbacks de diff fueron incompatibles con encoding, hunks o conversión LF/CRLF | Seis invocaciones fallidas, sin cambios parciales | Se validaron todas las sustituciones en memoria y se escribieron juntas en UTF-8 | Usar el fallback transaccional validado cuando el helper no esté disponible |
 
 ## Cierre V2-03
 
@@ -60,6 +64,33 @@ Registrar procesos, tiempos confirmados, iteraciones, bloqueos y errores para so
 - Archivos modificados: 8.
 - Retrabajo: una repetición de la inspección Git de solo lectura.
 - Resultado: TP-006 cerrado `PASS_WITH_OBSERVATIONS`; publicación pendiente.
+
+## Cierre V2-09
+
+- Finalidad: evaluación de preparación para publicación.
+- Resultado: `COMPLETE`.
+- Hallazgos: seis documentales.
+- Código modificado: no.
+- Commit: ninguno.
+- Recomendación: ejecutar V2-09A.
+- Errores recuperados: cuatro.
+- Remoto modificado: no.
+
+## Cierre V2-09A
+
+- Inicio: 2026-07-31 18:06:23.077 ART.
+- Fin documental: 2026-07-31 18:17:02.088 ART.
+- Duración total: 10 min 39,011 s.
+- Herramienta: Codex local.
+- Resultado: `COMPLETE`.
+- Archivos modificados: 6; ningún archivo creado.
+- Errores: 9 invocaciones recuperadas, agrupadas en `V2-09A-INF-01` y
+  `V2-09A-OPS-01`.
+- Ciclos de corrección: 9.
+- Código, pruebas, dependencias, Docker y datos modificados: no.
+- Commit: commit documental de la propia fase; consultar el primer commit
+  posterior a `908aad6c`.
+- Remoto modificado: no.
 
 ## Taxonomía
 

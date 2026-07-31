@@ -22,7 +22,7 @@ No cambiar arquitectura, dependencias, schema, migraciones, servicios Docker ni 
 - V1 aprobada: `91df3e5b300fba1d050ef9250164849852d3ef9a`.
 - V1 contiene cuatro commits y no debe reescribirse.
 - Rama de implementación V2: `v2/implementacion`.
-- V2 está implementada y validada localmente; su publicación sigue pendiente.
+- Antes de trabajar, verificar la rama, el HEAD y las referencias remotas reales.
 - No usar amend, rebase destructivo, squash retrospectivo ni force push.
 - No publicar V2 hasta completar implementación, TP-006, aceptación y autorización específicas.
 - No versionar secretos, `.env`, dependencias, builds, coverage, logs, datos ni archivos privados de IDE.
@@ -120,17 +120,29 @@ El informe debe incluir resultado, resumen, archivos, dependencias, validaciones
 - Detenerse a las 16 horas sin nueva autorización.
 - Contingencia máxima estimada: 21–23 horas, sujeta a autorización.
 
-## Estado vigente de V2
+## Fotografía histórica del cierre prepublicación V2
 
+- Fecha: 31 de julio de 2026.
+- HEAD al inicio de V2-09A: `908aad6c0dd7add5e5bf31589135b01a143e3f05`.
 - Línea base V1 preservada en `91df3e5b300fba1d050ef9250164849852d3ef9a`.
-- Rama local: `v2/implementacion`.
+- Rama en esa fotografía: `v2/implementacion`.
 - Implementación y validación V2 completadas.
 - TP-006: `PASS_WITH_OBSERVATIONS`.
 - Pruebas únicas finales: 99.
 - Defectos funcionales abiertos: ninguno.
-- Publicación, fusión y push: pendientes de autorización específica.
-- No ejecutar cambios adicionales sin autorización.
+- Publicación, fusión y push estaban pendientes de autorización específica en
+  ese momento.
+
+Esta sección registra el cierre prepublicación y no determina el estado remoto
+vigente.
+
+## Reglas operativas permanentes
+
+- Verificar siempre rama, HEAD y remoto mediante Git local y remoto antes de
+  trabajar; no asumir que publicación o merge continúan pendientes.
+- No iniciar modificaciones nuevas sin autorización específica.
 - No usar amend ni force push y no reescribir la historia V1.
+- No usar rebase destructivo ni squash retrospectivo.
 - Codex y Cursor no editan simultáneamente.
 - Cursor queda reservado para Browser cuando Codex no disponga de ese canal.
 - Antes de cada campaña verificar Git, Docker, aislamiento y dataset; servicios

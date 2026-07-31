@@ -39,6 +39,23 @@ ejecución principal.
 - Docker Desktop iniciado, con Docker Compose disponible.
 - Node.js 24.x y npm para ejecutar comandos de calidad fuera de Docker.
 
+## Puesta en marcha desde cero
+
+En PowerShell sobre Windows:
+
+```powershell
+git clone https://github.com/aldofederico/sistema-gestion-prestadores.git
+cd sistema-gestion-prestadores
+copy .env.example .env
+docker compose up -d --build
+```
+
+En shells donde `cp` sea el comando disponible, el tercer paso puede ejecutarse
+como `cp .env.example .env`. Mientras una versión se encuentre en revisión en
+una rama remota, el evaluador puede cambiar explícitamente a la rama indicada
+por el Pull Request antes de iniciar. La rama de revisión no se considera un
+requisito permanente del clonado general.
+
 ## Ejecución principal
 
 ```powershell
@@ -208,10 +225,16 @@ El alcance no incluye autenticación, autorización, Swagger, routing frontend,
 CI/CD ni despliegue. No existe eliminación física ni endpoint `DELETE`.
 Swagger no forma parte del challenge y la autenticación no fue requerida.
 
-## Estado V2
+## Fotografía histórica de V2
 
-Estado de esta rama: V2 validada, pendiente de publicación.
+Estado documentado al cierre de validación prepublicación del 31 de julio de
+2026: V2 se encontraba validada en la rama `v2/implementacion` y pendiente de
+publicación.
 
 TP-006 finalizó `PASS_WITH_OBSERVATIONS`: todos los casos y gates pasaron, los
 dos defectos MEDIUM detectados fueron corregidos y verificados, y no quedan
-defectos funcionales abiertos. La rama no fue fusionada ni publicada.
+defectos funcionales abiertos. En esa fotografía histórica, la rama todavía no
+había sido fusionada ni publicada.
+
+El estado remoto vigente debe verificarse en GitHub y no inferirse únicamente
+de esta fotografía histórica.

@@ -110,13 +110,20 @@ Estas mejoras no se implementan dentro de V2.
 | V2-07A | 18 min 24,606 s |
 | Primer V2-07B | 1 min 38,047 s |
 | V2-07B-R | 6 min 52 s |
+| V2-08 | Aproximadamente 5 min 41 s; inicio con precisión al minuto |
 
-El tiempo medido conocido, excluyendo V2-01, es aproximadamente 1 hora y
-40 minutos. No se calcula un total con precisión al segundo porque V2-07 es
-aproximado.
+El tiempo medido conocido del ciclo de implementación y validación hasta V2-08
+inclusive, excluyendo V2-01, es aproximadamente 1 hora y 46 minutos. Esta cifra
+no se presenta como el tiempo total absoluto del proyecto ni se calcula con
+precisión al segundo porque V2-07 es aproximado.
 
-La cifra no incluye V2-01, intervención humana entre fases, preparación manual,
-descarga o reemplazo de scripts ni pausas de calendario.
+La cifra:
+
+- no incluye V2-09 ni fases posteriores de preparación o publicación;
+- no incluye intervención humana entre fases;
+- no incluye pausas de calendario;
+- no incluye preparación manual, descarga o reemplazo de scripts;
+- mantiene V2-01 sin duración determinable.
 
 ## Conclusión
 
