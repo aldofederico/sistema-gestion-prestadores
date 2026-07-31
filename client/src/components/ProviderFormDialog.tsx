@@ -11,8 +11,8 @@ import {
   Stack,
   TextField
 } from "@mui/material";
-import { useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { useEffect, useRef } from "react";
+import { Controller, useForm } from "react-hook-form";
 import { ApiError, NetworkError } from "../api/providers";
 import {
   emptyProviderFormValues,
@@ -20,6 +20,7 @@ import {
   providerFormSchema,
   providerToFormValues
 } from "../schemas/provider";
+import { digitsOnly, formatPartialCuit } from "../utils/provider-normalization";
 import type {
   Provider,
   ProviderFormValues,
@@ -46,6 +47,21 @@ const knownFields: ReadonlySet<keyof ProviderFormValues> = new Set([
 const isKnownField = (path: string): path is keyof ProviderFormValues =>
   knownFields.has(path as keyof ProviderFormValues);
 
+const caretPositionAfterDigits = (value: string, digitCount: number) => {
+  if (digitCount <= 0) return 0;
+
+  let seen = 0;
+  for (let index = 0; index < value.length; index += 1) {
+    const character = value[index]!;
+    if (character >= "0" && character <= "9") {
+      seen += 1;
+      if (seen === digitCount) return index + 1;
+    }
+  }
+
+  return value.length;
+};
+
 export function ProviderFormDialog({
   open,
   mode,
@@ -53,8 +69,11 @@ export function ProviderFormDialog({
   onClose,
   onSubmit
 }: ProviderFormDialogProps) {
+  const cuitInputRef = useRef<HTMLInputElement | null>(null);
+  const cuitCaretFrameRef = useRef<number | null>(null);
   const {
     register,
+    control,
     handleSubmit,
     reset,
     clearErrors,
@@ -70,6 +89,15 @@ export function ProviderFormDialog({
     reset(provider && mode === "edit" ? providerToFormValues(provider) : emptyProviderFormValues);
     clearErrors();
   }, [clearErrors, mode, open, provider, reset]);
+
+  useEffect(
+    () => () => {
+      if (cuitCaretFrameRef.current !== null) {
+        window.cancelAnimationFrame(cuitCaretFrameRef.current);
+      }
+    },
+    []
+  );
 
   const submit = async (values: ProviderFormValues) => {
     clearErrors("root.server");
@@ -141,14 +169,46 @@ export function ProviderFormDialog({
             {errors.root?.server?.message ? (
               <Alert severity="error">{errors.root.server.message}</Alert>
             ) : null}
-            <TextField
-              label="CUIT"
-              fullWidth
-              autoFocus
-              disabled={isSubmitting}
-              error={Boolean(errors.cuit)}
-              helperText={errors.cuit?.message}
-              {...register("cuit")}
+            <Controller
+              name="cuit"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  label="CUIT"
+                  fullWidth
+                  autoFocus
+                  disabled={isSubmitting}
+                  error={Boolean(errors.cuit)}
+                  helperText={errors.cuit?.message}
+                  name={field.name}
+                  value={field.value}
+                  onBlur={field.onBlur}
+                  onChange={(event) => {
+                    const caret = event.target.selectionStart ?? event.target.value.length;
+                    const precedingDigits = digitsOnly(
+                      event.target.value.slice(0, caret)
+                    ).length;
+                    const formatted = formatPartialCuit(event.target.value);
+
+                    field.onChange(formatted);
+
+                    if (cuitCaretFrameRef.current !== null) {
+                      window.cancelAnimationFrame(cuitCaretFrameRef.current);
+                    }
+                    cuitCaretFrameRef.current = window.requestAnimationFrame(() => {
+                      const input = cuitInputRef.current;
+                      if (!input) return;
+                      const position = caretPositionAfterDigits(formatted, precedingDigits);
+                      input.setSelectionRange(position, position);
+                    });
+                  }}
+                  inputRef={(element: HTMLInputElement | null) => {
+                    field.ref(element);
+                    cuitInputRef.current = element;
+                  }}
+                  slotProps={{ htmlInput: { inputMode: "numeric" } }}
+                />
+              )}
             />
             <TextField
               label="Razón social"
@@ -185,13 +245,24 @@ export function ProviderFormDialog({
               helperText={errors.email?.message}
               {...register("email")}
             />
-            <TextField
-              label="Teléfono"
-              fullWidth
-              disabled={isSubmitting}
-              error={Boolean(errors.phone)}
-              helperText={errors.phone?.message}
-              {...register("phone")}
+            <Controller
+              name="phone"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  label="Teléfono"
+                  fullWidth
+                  disabled={isSubmitting}
+                  error={Boolean(errors.phone)}
+                  helperText={errors.phone?.message}
+                  name={field.name}
+                  value={field.value}
+                  onBlur={field.onBlur}
+                  onChange={(event) => field.onChange(digitsOnly(event.target.value))}
+                  inputRef={field.ref}
+                  slotProps={{ htmlInput: { inputMode: "numeric" } }}
+                />
+              )}
             />
           </Stack>
         </DialogContent>

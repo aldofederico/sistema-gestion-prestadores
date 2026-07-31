@@ -18,7 +18,7 @@ const provider: Provider = {
   province: "Buenos Aires",
   locality: "La Plata",
   email: "uno@ejemplo.test",
-  phone: "2215550101",
+  phone: "02215550101",
   status: "ACTIVE",
   createdAt: "2026-07-30T18:00:00.000Z",
   updatedAt: "2026-07-30T18:00:00.000Z"
@@ -197,6 +197,22 @@ describe("Gestión de prestadores", () => {
     expect(await within(dialog).findByText("Correo electrónico inválido")).toBeInTheDocument();
   });
 
+  it("sanea y formatea progresivamente el CUIT con un máximo de 11 dígitos", async () => {
+    render(<App />);
+    const dialog = await openCreateDialog();
+    const cuit = within(dialog).getByLabelText("CUIT");
+
+    expect(cuit).toHaveAttribute("inputmode", "numeric");
+    fireEvent.change(cuit, { target: { value: "2" } });
+    expect(cuit).toHaveValue("2");
+    fireEvent.change(cuit, { target: { value: "20" } });
+    expect(cuit).toHaveValue("20");
+    fireEvent.change(cuit, { target: { value: "20 a-1" } });
+    expect(cuit).toHaveValue("20-1");
+    fireEvent.change(cuit, { target: { value: "20 # 1234.5678 / 9 extra 999" } });
+    expect(cuit).toHaveValue("20-12345678-9");
+  });
+
   it("muestra error para CUIT inválido", async () => {
     render(<App />);
     const dialog = await openCreateDialog();
@@ -225,8 +241,68 @@ describe("Gestión de prestadores", () => {
       expect(postCall).toBeDefined();
       const payload = JSON.parse(String(postCall?.[1]?.body)) as Record<string, unknown>;
       expect(payload.cuit).toBe("20123456789");
+      expect(payload.phone).toBeNull();
       expect(payload).not.toHaveProperty("status");
     });
+  });
+
+  it("sanea teléfono formateado y envía solo dígitos preservando ceros", async () => {
+    fetchMock.mockImplementation(async (_input, init) =>
+      jsonResponse(init?.method === "POST" ? provider : emptyList)
+    );
+    render(<App />);
+    const dialog = await openCreateDialog();
+    fillRequiredFields(dialog);
+    const phone = within(dialog).getByLabelText("Teléfono");
+
+    expect(phone).toHaveAttribute("inputmode", "numeric");
+    fireEvent.change(phone, { target: { value: "(011) 4567-8901 ext.+" } });
+    expect(phone).toHaveValue("01145678901");
+    fireEvent.click(within(dialog).getByRole("button", { name: "Guardar" }));
+
+    await waitFor(() => {
+      const postCall = fetchMock.mock.calls.find((call) => call[1]?.method === "POST");
+      const payload = JSON.parse(String(postCall?.[1]?.body)) as Record<string, unknown>;
+      expect(payload.phone).toBe("01145678901");
+    });
+  });
+
+  it("acepta exactamente 30 dígitos de teléfono sin truncar", async () => {
+    fetchMock.mockImplementation(async (_input, init) =>
+      jsonResponse(init?.method === "POST" ? provider : emptyList)
+    );
+    render(<App />);
+    const dialog = await openCreateDialog();
+    fillRequiredFields(dialog);
+    const phone = within(dialog).getByLabelText("Teléfono");
+    const thirtyDigits = "012345678901234567890123456789";
+
+    fireEvent.change(phone, { target: { value: thirtyDigits } });
+    expect(phone).toHaveValue(thirtyDigits);
+    fireEvent.click(within(dialog).getByRole("button", { name: "Guardar" }));
+
+    await waitFor(() => {
+      const postCall = fetchMock.mock.calls.find((call) => call[1]?.method === "POST");
+      const payload = JSON.parse(String(postCall?.[1]?.body)) as Record<string, unknown>;
+      expect(payload.phone).toBe(thirtyDigits);
+    });
+  });
+
+  it("rechaza 31 dígitos de teléfono sin truncar ni enviar", async () => {
+    render(<App />);
+    const dialog = await openCreateDialog();
+    fillRequiredFields(dialog);
+    const phone = within(dialog).getByLabelText("Teléfono");
+    const thirtyOneDigits = "0123456789012345678901234567890";
+
+    fireEvent.change(phone, { target: { value: thirtyOneDigits } });
+    expect(phone).toHaveValue(thirtyOneDigits);
+    fireEvent.click(within(dialog).getByRole("button", { name: "Guardar" }));
+
+    expect(
+      await within(dialog).findByText("Teléfono no puede superar 30 dígitos")
+    ).toBeInTheDocument();
+    expect(fetchMock.mock.calls.some((call) => call[1]?.method === "POST")).toBe(false);
   });
 
   it("alta exitosa muestra feedback", async () => {
@@ -274,9 +350,9 @@ describe("Gestión de prestadores", () => {
     fireEvent.click(screen.getAllByRole("button", { name: "Editar Prestador Uno" })[0]!);
 
     const dialog = await screen.findByRole("dialog", { name: "Editar prestador" });
-    expect(within(dialog).getByLabelText("CUIT")).toHaveValue("20123456789");
+    expect(within(dialog).getByLabelText("CUIT")).toHaveValue("20-12345678-9");
     expect(within(dialog).getByLabelText("Razón social")).toHaveValue("Prestador Uno");
-    expect(within(dialog).getByLabelText("Teléfono")).toHaveValue("2215550101");
+    expect(within(dialog).getByLabelText("Teléfono")).toHaveValue("02215550101");
   });
 
   it("edición ejecuta PUT sin status", async () => {
@@ -287,16 +363,19 @@ describe("Gestión de prestadores", () => {
     await screen.findByText("1 prestador encontrado");
     fireEvent.click(screen.getAllByRole("button", { name: "Editar Prestador Uno" })[0]!);
     const dialog = await screen.findByRole("dialog", { name: "Editar prestador" });
-    fireEvent.change(within(dialog).getByLabelText("Teléfono"), {
-      target: { value: "2215559999" }
+    const phone = within(dialog).getByLabelText("Teléfono");
+    fireEvent.change(phone, {
+      target: { value: "+54 (0221) 555-9999 ext." }
     });
+    expect(phone).toHaveValue("5402215559999");
     fireEvent.click(within(dialog).getByRole("button", { name: "Guardar cambios" }));
 
     await waitFor(() => {
       const putCall = fetchMock.mock.calls.find((call) => call[1]?.method === "PUT");
       expect(String(putCall?.[0])).toContain(provider.id);
       const payload = JSON.parse(String(putCall?.[1]?.body)) as Record<string, unknown>;
-      expect(payload.phone).toBe("2215559999");
+      expect(payload.cuit).toBe("20123456789");
+      expect(payload.phone).toBe("5402215559999");
       expect(payload).not.toHaveProperty("status");
     });
   });
@@ -361,6 +440,8 @@ describe("Gestión de prestadores", () => {
     });
     expect(within(tableView).getByText("Prestador Uno")).toBeInTheDocument();
     expect(within(cardView).getByText("Prestador Uno")).toBeInTheDocument();
+    expect(within(tableView).getByText("20-12345678-9")).toBeInTheDocument();
+    expect(within(cardView).getByText("CUIT: 20-12345678-9")).toBeInTheDocument();
     expect(within(tableView).getByRole("button", { name: "Editar Prestador Uno" })).toBeInTheDocument();
     expect(within(cardView).getByRole("button", { name: "Editar Prestador Uno" })).toBeInTheDocument();
   });

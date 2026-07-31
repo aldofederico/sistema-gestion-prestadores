@@ -1,6 +1,7 @@
 import { Prisma, ProviderStatus, type Provider } from "@prisma/client";
 import { AppError } from "../errors/app-error.js";
 import { prisma } from "../persistence/prisma.js";
+import { digitsOnly } from "./provider.normalization.js";
 import type {
   CreateProviderInput,
   ListProvidersQuery,
@@ -58,7 +59,7 @@ export const listProviders = async (query: ListProvidersQuery) => {
       businessName: { contains: query.search, mode: "insensitive" }
     });
 
-    const cuitDigits = query.search.replace(/\D/g, "");
+    const cuitDigits = digitsOnly(query.search);
 
     if (cuitDigits.length > 0) {
       searchConditions.push({ cuit: { contains: cuitDigits } });

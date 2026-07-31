@@ -9,6 +9,7 @@ import {
   Typography
 } from "@mui/material";
 import type { Provider } from "../types/provider";
+import { formatCuit } from "../utils/provider-normalization";
 
 type ProviderCardsProps = {
   providers: Provider[];
@@ -49,7 +50,9 @@ export function ProviderCards({
                   size="small"
                 />
               </Stack>
-              <Typography color="text.secondary">CUIT: {provider.cuit}</Typography>
+              <Typography color="text.secondary">
+                CUIT: {formatCuit(provider.cuit)}
+              </Typography>
               <Typography sx={{ overflowWrap: "anywhere" }}>{provider.email}</Typography>
               <Typography color="text.secondary">{location(provider)}</Typography>
             </Stack>

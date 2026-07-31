@@ -1,12 +1,17 @@
 import { z } from "zod";
 import type { Provider, ProviderFormValues, ProviderPayload } from "../types/provider";
+import {
+  digitsOnly,
+  formatCuit,
+  toCanonicalCuit
+} from "../utils/provider-normalization";
 
 export const providerFormSchema = z.object({
   cuit: z
     .string()
     .trim()
     .min(1, "CUIT obligatorio")
-    .refine((value) => value.replace(/\D/g, "").length === 11, {
+    .refine((value) => digitsOnly(value).length === 11, {
       message: "El CUIT debe contener exactamente 11 dígitos"
     }),
   businessName: z
@@ -30,7 +35,9 @@ export const providerFormSchema = z.object({
   phone: z
     .string()
     .trim()
-    .max(30, "Teléfono no puede superar 30 caracteres")
+    .refine((value) => digitsOnly(value).length <= 30, {
+      message: "Teléfono no puede superar 30 dígitos"
+    })
 });
 
 export const emptyProviderFormValues: ProviderFormValues = {
@@ -43,7 +50,7 @@ export const emptyProviderFormValues: ProviderFormValues = {
 };
 
 export const providerToFormValues = (provider: Provider): ProviderFormValues => ({
-  cuit: provider.cuit,
+  cuit: formatCuit(provider.cuit),
   businessName: provider.businessName,
   province: provider.province ?? "",
   locality: provider.locality ?? "",
@@ -56,13 +63,18 @@ const nullableTrimmed = (value: string) => {
   return normalized === "" ? null : normalized;
 };
 
+const nullableDigits = (value: string) => {
+  const normalized = digitsOnly(value);
+  return normalized === "" ? null : normalized;
+};
+
 export const formValuesToPayload = (
   values: ProviderFormValues
 ): ProviderPayload => ({
-  cuit: values.cuit.replace(/\D/g, ""),
+  cuit: toCanonicalCuit(values.cuit),
   businessName: values.businessName.trim(),
   province: nullableTrimmed(values.province),
   locality: nullableTrimmed(values.locality),
   email: values.email.trim().toLowerCase(),
-  phone: nullableTrimmed(values.phone)
+  phone: nullableDigits(values.phone)
 });

@@ -13,6 +13,7 @@ import {
   Typography
 } from "@mui/material";
 import type { Provider } from "../types/provider";
+import { formatCuit } from "../utils/provider-normalization";
 
 type ProviderListProps = {
   providers: Provider[];
@@ -52,7 +53,9 @@ export function ProviderTable({
           <TableBody>
             {providers.map((provider) => (
               <TableRow key={provider.id} hover>
-                <TableCell sx={{ whiteSpace: "nowrap" }}>{provider.cuit}</TableCell>
+                <TableCell sx={{ whiteSpace: "nowrap" }}>
+                  {formatCuit(provider.cuit)}
+                </TableCell>
                 <TableCell>
                   <Typography sx={{ fontWeight: 600 }}>
                     {provider.businessName}

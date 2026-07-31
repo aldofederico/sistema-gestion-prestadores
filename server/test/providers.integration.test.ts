@@ -74,6 +74,63 @@ describe("API de prestadores", () => {
 
     expect(response.status).toBe(201);
     expect(response.body.cuit).toBe("20123456789");
+    expect(
+      (await prisma.provider.findUnique({ where: { cuit: "20123456789" } }))?.cuit
+    ).toBe("20123456789");
+  });
+
+  it("POST normaliza teléfono formateado y preserva ceros iniciales", async () => {
+    const response = await request(app)
+      .post("/api/providers")
+      .send(validProvider({ phone: "(011) 4567-8901 ext." }));
+
+    expect(response.status).toBe(201);
+    expect(response.body.phone).toBe("01145678901");
+    expect(
+      (await prisma.provider.findUnique({ where: { cuit: "20123456789" } }))?.phone
+    ).toBe("01145678901");
+  });
+
+  it("POST convierte un teléfono sin dígitos a null", async () => {
+    const response = await request(app)
+      .post("/api/providers")
+      .send(validProvider({ phone: "--- (+) ..." }));
+
+    expect(response.status).toBe(201);
+    expect(response.body.phone).toBeNull();
+    expect(
+      (await prisma.provider.findUnique({ where: { cuit: "20123456789" } }))?.phone
+    ).toBeNull();
+  });
+
+  it("POST admite exactamente 30 dígitos de teléfono", async () => {
+    const phone = "012345678901234567890123456789";
+    const response = await request(app)
+      .post("/api/providers")
+      .send(validProvider({ phone }));
+
+    expect(response.status).toBe(201);
+    expect(response.body.phone).toBe(phone);
+  });
+
+  it("POST rechaza 31 dígitos de teléfono con el error público invariante", async () => {
+    const response = await request(app)
+      .post("/api/providers")
+      .send(validProvider({ phone: "0123456789012345678901234567890" }));
+
+    expect(response.status).toBe(400);
+    expect(response.body.error).toMatchObject({
+      code: "VALIDATION_ERROR",
+      message: "Solicitud inválida.",
+      details: {
+        fields: [
+          {
+            path: "phone",
+            message: "Teléfono no puede superar 30 dígitos"
+          }
+        ]
+      }
+    });
   });
 
   it("POST rechaza CUIT vacío", async () => {
@@ -129,7 +186,7 @@ describe("API de prestadores", () => {
     const first = await request(app).post("/api/providers").send(validProvider());
     const duplicate = await request(app)
       .post("/api/providers")
-      .send(validProvider({ businessName: "Otro nombre" }));
+      .send(validProvider({ cuit: "20-12345678-9", businessName: "Otro nombre" }));
 
     expect(first.status).toBe(201);
     expect(duplicate.status).toBe(409);
@@ -178,6 +235,23 @@ describe("API de prestadores", () => {
     });
 
     const response = await request(app).get("/api/providers?search=20-123");
+
+    expect(response.status).toBe(200);
+    expect(response.body.items).toHaveLength(1);
+    expect(response.body.items[0].cuit).toBe("20123456789");
+  });
+
+  it("GET busca por CUIT aunque el texto incluya espacios y símbolos", async () => {
+    await createStoredProvider({ cuit: "20123456789" });
+    await createStoredProvider({
+      cuit: "30765432109",
+      businessName: "Otro prestador",
+      email: "otro@ejemplo.test"
+    });
+
+    const response = await request(app).get(
+      "/api/providers?search=20%20%23%20123.456"
+    );
 
     expect(response.status).toBe(200);
     expect(response.body.items).toHaveLength(1);
@@ -327,7 +401,7 @@ describe("API de prestadores", () => {
           province: "Córdoba",
           locality: "Córdoba",
           email: "MODIFICADO@EJEMPLO.TEST",
-          phone: "3515550101"
+          phone: "+54 (0351) 555-0101 ext."
         })
       );
 
@@ -336,8 +410,12 @@ describe("API de prestadores", () => {
       cuit: "30765432109",
       businessName: "Prestador Modificado",
       email: "modificado@ejemplo.test",
+      phone: "5403515550101",
       status: "INACTIVE"
     });
+    expect(
+      (await prisma.provider.findUnique({ where: { id: stored.id } }))?.phone
+    ).toBe("5403515550101");
   });
 
   it("PUT rechaza propiedad status", async () => {
