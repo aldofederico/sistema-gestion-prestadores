@@ -39,6 +39,23 @@ ejecución principal.
 - Docker Desktop iniciado, con Docker Compose disponible.
 - Node.js 24.x y npm para ejecutar comandos de calidad fuera de Docker.
 
+## Puesta en marcha desde cero
+
+En PowerShell sobre Windows:
+
+```powershell
+git clone https://github.com/aldofederico/sistema-gestion-prestadores.git
+cd sistema-gestion-prestadores
+copy .env.example .env
+docker compose up -d --build
+```
+
+En shells donde `cp` sea el comando disponible, el tercer paso puede ejecutarse
+como `cp .env.example .env`. Mientras una versión se encuentre en revisión en
+una rama remota, el evaluador puede cambiar explícitamente a la rama indicada
+por el Pull Request antes de iniciar. La rama de revisión no se considera un
+requisito permanente del clonado general.
+
 ## Ejecución principal
 
 ```powershell
@@ -68,8 +85,10 @@ docker compose up --build
 ## Datos iniciales
 
 El arranque aplica las migraciones y ejecuta un seed idempotente. El seed crea
-tres prestadores ficticios mediante `upsert` por CUIT: dos activos y uno
-inactivo. Ejecutarlo nuevamente no duplica registros.
+un dataset administrado de 30 prestadores ficticios mediante `upsert` por CUIT:
+20 activos y 10 inactivos. Conserva los tres registros V1, agrega 27 y no
+elimina datos ajenos. Con `pageSize=10` produce tres páginas completas y una
+cuarta vacía. Ejecutarlo nuevamente no duplica registros.
 
 El estado inicial de un prestador nuevo es `ACTIVE`. Un prestador desactivado
 permanece físicamente almacenado y puede reactivarse.
@@ -95,6 +114,14 @@ desarrollo `providers` no se usa en las pruebas de integración.
 
 Las pruebas cubren health, validaciones, contratos API, persistencia, búsqueda,
 filtros, paginación, formularios, mutaciones, feedback y variantes responsive.
+El estado final V2 contiene 99 pruebas únicas verdes.
+
+El protocolo V2 previo a la ejecución está en
+[`docs/testing/TP-006_TEST_PROTOCOL.md`](docs/testing/TP-006_TEST_PROTOCOL.md);
+el resultado observado está en
+[`docs/testing/TP-006_TEST_EXECUTION_REPORT.md`](docs/testing/TP-006_TEST_EXECUTION_REPORT.md)
+y la retrospectiva en
+[`docs/process/V2_RETROSPECTIVE.md`](docs/process/V2_RETROSPECTIVE.md).
 El checklist manual reutilizable está en
 [`docs/ACCEPTANCE_CHECKLIST.md`](docs/ACCEPTANCE_CHECKLIST.md).
 
@@ -143,10 +170,13 @@ No existe endpoint `DELETE`.
 
 ## Validaciones
 
-- CUIT obligatorio, único y normalizado a exactamente 11 dígitos.
+- CUIT obligatorio, único y normalizado a exactamente 11 dígitos en API y
+  PostgreSQL; la interfaz aplica el formato visual `XX-XXXXXXXX-X`.
 - No se valida el dígito verificador del CUIT.
 - Razón social obligatoria.
 - Correo electrónico obligatorio, válido y normalizado a minúsculas.
+- Teléfono opcional, conservado como cadena de solo dígitos o `null`, con
+  máximo de 30 dígitos y sin truncamiento silencioso.
 - Campos opcionales vacíos almacenados como `null`.
 - Estado admitido: `ACTIVE` o `INACTIVE`.
 - `POST` fuerza el estado inicial `ACTIVE`.
@@ -165,6 +195,10 @@ scripts/            Arranque, limpieza y orquestación de pruebas
 compose.yaml        Ejecución principal
 compose.test.yaml   Exposición aislada de PostgreSQL para pruebas
 Dockerfile          Build multietapa y runtime de producción
+docs/testing/       Protocolos e informes de ejecución
+docs/process/       Logs y retrospectivas
+docs/product/       Historias, habilitadores y trazabilidad
+docs/v2/            Cambio y plan V2
 ```
 
 ## Decisiones técnicas
@@ -190,3 +224,17 @@ Dockerfile          Build multietapa y runtime de producción
 El alcance no incluye autenticación, autorización, Swagger, routing frontend,
 CI/CD ni despliegue. No existe eliminación física ni endpoint `DELETE`.
 Swagger no forma parte del challenge y la autenticación no fue requerida.
+
+## Fotografía histórica de V2
+
+Estado documentado al cierre de validación prepublicación del 31 de julio de
+2026: V2 se encontraba validada en la rama `v2/implementacion` y pendiente de
+publicación.
+
+TP-006 finalizó `PASS_WITH_OBSERVATIONS`: todos los casos y gates pasaron, los
+dos defectos MEDIUM detectados fueron corregidos y verificados, y no quedan
+defectos funcionales abiertos. En esa fotografía histórica, la rama todavía no
+había sido fusionada ni publicada.
+
+El estado remoto vigente debe verificarse en GitHub y no inferirse únicamente
+de esta fotografía histórica.

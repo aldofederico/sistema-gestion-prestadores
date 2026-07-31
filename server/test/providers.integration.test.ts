@@ -3,6 +3,11 @@
 import { Prisma, ProviderStatus } from "@prisma/client";
 import request from "supertest";
 import { afterAll, beforeEach, describe, expect, it } from "vitest";
+import {
+  providerSeedData,
+  seedProviders,
+  v1ProviderSeedData
+} from "../../prisma/provider-seed.js";
 import { createApp } from "../src/app.js";
 import { prisma } from "../src/persistence/prisma.js";
 
@@ -74,6 +79,63 @@ describe("API de prestadores", () => {
 
     expect(response.status).toBe(201);
     expect(response.body.cuit).toBe("20123456789");
+    expect(
+      (await prisma.provider.findUnique({ where: { cuit: "20123456789" } }))?.cuit
+    ).toBe("20123456789");
+  });
+
+  it("POST normaliza teléfono formateado y preserva ceros iniciales", async () => {
+    const response = await request(app)
+      .post("/api/providers")
+      .send(validProvider({ phone: "(011) 4567-8901 ext." }));
+
+    expect(response.status).toBe(201);
+    expect(response.body.phone).toBe("01145678901");
+    expect(
+      (await prisma.provider.findUnique({ where: { cuit: "20123456789" } }))?.phone
+    ).toBe("01145678901");
+  });
+
+  it("POST convierte un teléfono sin dígitos a null", async () => {
+    const response = await request(app)
+      .post("/api/providers")
+      .send(validProvider({ phone: "--- (+) ..." }));
+
+    expect(response.status).toBe(201);
+    expect(response.body.phone).toBeNull();
+    expect(
+      (await prisma.provider.findUnique({ where: { cuit: "20123456789" } }))?.phone
+    ).toBeNull();
+  });
+
+  it("POST admite exactamente 30 dígitos de teléfono", async () => {
+    const phone = "012345678901234567890123456789";
+    const response = await request(app)
+      .post("/api/providers")
+      .send(validProvider({ phone }));
+
+    expect(response.status).toBe(201);
+    expect(response.body.phone).toBe(phone);
+  });
+
+  it("POST rechaza 31 dígitos de teléfono con el error público invariante", async () => {
+    const response = await request(app)
+      .post("/api/providers")
+      .send(validProvider({ phone: "0123456789012345678901234567890" }));
+
+    expect(response.status).toBe(400);
+    expect(response.body.error).toMatchObject({
+      code: "VALIDATION_ERROR",
+      message: "Solicitud inválida.",
+      details: {
+        fields: [
+          {
+            path: "phone",
+            message: "Teléfono no puede superar 30 dígitos"
+          }
+        ]
+      }
+    });
   });
 
   it("POST rechaza CUIT vacío", async () => {
@@ -129,7 +191,7 @@ describe("API de prestadores", () => {
     const first = await request(app).post("/api/providers").send(validProvider());
     const duplicate = await request(app)
       .post("/api/providers")
-      .send(validProvider({ businessName: "Otro nombre" }));
+      .send(validProvider({ cuit: "20-12345678-9", businessName: "Otro nombre" }));
 
     expect(first.status).toBe(201);
     expect(duplicate.status).toBe(409);
@@ -178,6 +240,23 @@ describe("API de prestadores", () => {
     });
 
     const response = await request(app).get("/api/providers?search=20-123");
+
+    expect(response.status).toBe(200);
+    expect(response.body.items).toHaveLength(1);
+    expect(response.body.items[0].cuit).toBe("20123456789");
+  });
+
+  it("GET busca por CUIT aunque el texto incluya espacios y símbolos", async () => {
+    await createStoredProvider({ cuit: "20123456789" });
+    await createStoredProvider({
+      cuit: "30765432109",
+      businessName: "Otro prestador",
+      email: "otro@ejemplo.test"
+    });
+
+    const response = await request(app).get(
+      "/api/providers?search=20%20%23%20123.456"
+    );
 
     expect(response.status).toBe(200);
     expect(response.body.items).toHaveLength(1);
@@ -327,7 +406,7 @@ describe("API de prestadores", () => {
           province: "Córdoba",
           locality: "Córdoba",
           email: "MODIFICADO@EJEMPLO.TEST",
-          phone: "3515550101"
+          phone: "+54 (0351) 555-0101 ext."
         })
       );
 
@@ -336,8 +415,12 @@ describe("API de prestadores", () => {
       cuit: "30765432109",
       businessName: "Prestador Modificado",
       email: "modificado@ejemplo.test",
+      phone: "5403515550101",
       status: "INACTIVE"
     });
+    expect(
+      (await prisma.provider.findUnique({ where: { id: stored.id } }))?.phone
+    ).toBe("5403515550101");
   });
 
   it("PUT rechaza propiedad status", async () => {
@@ -429,5 +512,210 @@ describe("API de prestadores", () => {
 
     expect(response.status).toBe(404);
     expect(await prisma.provider.count()).toBe(1);
+  });
+});
+
+describe("Dataset inicial de prestadores", () => {
+  const managedCuits = providerSeedData.map((provider) => provider.cuit);
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const persistedSelection = {
+    id: true,
+    cuit: true,
+    businessName: true,
+    province: true,
+    locality: true,
+    email: true,
+    phone: true,
+    status: true
+  } satisfies Prisma.ProviderSelect;
+
+  it("define 30 miembros válidos, únicos y con los tres registros V1 literales", () => {
+    expect(providerSeedData).toHaveLength(30);
+    expect(
+      providerSeedData.filter((provider) => provider.status === ProviderStatus.ACTIVE)
+    ).toHaveLength(20);
+    expect(
+      providerSeedData.filter((provider) => provider.status === ProviderStatus.INACTIVE)
+    ).toHaveLength(10);
+
+    expect(new Set(managedCuits).size).toBe(30);
+    expect(new Set(providerSeedData.map((provider) => provider.email)).size).toBe(30);
+    expect(new Set(providerSeedData.map((provider) => provider.businessName)).size).toBe(30);
+
+    for (const provider of providerSeedData) {
+      expect(provider.cuit).toMatch(/^\d{11}$/);
+      expect(provider.email).toMatch(emailPattern);
+      expect(provider.businessName.length).toBeLessThanOrEqual(160);
+      expect(provider.province?.length ?? 0).toBeLessThanOrEqual(100);
+      expect(provider.locality?.length ?? 0).toBeLessThanOrEqual(100);
+      expect(provider.phone === null || /^\d{1,30}$/.test(provider.phone)).toBe(true);
+    }
+
+    expect(v1ProviderSeedData).toEqual([
+      {
+        cuit: "30700000001",
+        businessName: "Salud Horizonte SRL",
+        province: "Buenos Aires",
+        locality: "La Plata",
+        email: "contacto@saludhorizonte.example",
+        phone: "2214000001",
+        status: ProviderStatus.ACTIVE
+      },
+      {
+        cuit: "30700000019",
+        businessName: "Clínica Río Claro SA",
+        province: "Córdoba",
+        locality: "Córdoba",
+        email: "administracion@rioclaro.example",
+        phone: "3514000002",
+        status: ProviderStatus.ACTIVE
+      },
+      {
+        cuit: "30700000027",
+        businessName: "Centro Médico del Sur SAS",
+        province: "Río Negro",
+        locality: "Bariloche",
+        email: "gestion@medicodelsur.example",
+        phone: null,
+        status: ProviderStatus.INACTIVE
+      }
+    ]);
+    expect(providerSeedData.slice(0, 3)).toEqual(v1ProviderSeedData);
+  });
+
+  it("siembra una base vacía con 30 miembros y distribución persistida 20/10", async () => {
+    await seedProviders(prisma);
+
+    const persisted = await prisma.provider.findMany({
+      where: { cuit: { in: managedCuits } },
+      select: persistedSelection
+    });
+
+    expect(persisted).toHaveLength(30);
+    expect(await prisma.provider.count()).toBe(30);
+    expect(
+      persisted.filter((provider) => provider.status === ProviderStatus.ACTIVE)
+    ).toHaveLength(20);
+    expect(
+      persisted.filter((provider) => provider.status === ProviderStatus.INACTIVE)
+    ).toHaveLength(10);
+    expect(persisted.every((provider) => /^\d{11}$/.test(provider.cuit))).toBe(true);
+    expect(persisted.every((provider) => emailPattern.test(provider.email))).toBe(true);
+  });
+
+  it("amplía un volumen V1 a 30 y conserva literalmente sus tres registros", async () => {
+    await prisma.provider.createMany({ data: [...v1ProviderSeedData] });
+
+    await seedProviders(prisma);
+
+    expect(await prisma.provider.count()).toBe(30);
+    expect((await prisma.provider.count()) - v1ProviderSeedData.length).toBe(27);
+    for (const provider of v1ProviderSeedData) {
+      const persisted = await prisma.provider.findUnique({
+        where: { cuit: provider.cuit }
+      });
+      expect(persisted).toMatchObject(provider);
+    }
+  });
+
+  it("es idempotente y conserva los mismos miembros e identificadores", async () => {
+    await seedProviders(prisma);
+    const firstExecution = await prisma.provider.findMany({
+      where: { cuit: { in: managedCuits } },
+      select: persistedSelection,
+      orderBy: { cuit: "asc" }
+    });
+
+    await seedProviders(prisma);
+    const secondExecution = await prisma.provider.findMany({
+      where: { cuit: { in: managedCuits } },
+      select: persistedSelection,
+      orderBy: { cuit: "asc" }
+    });
+
+    expect(firstExecution).toHaveLength(30);
+    expect(secondExecution).toEqual(firstExecution);
+    expect(await prisma.provider.count()).toBe(30);
+  });
+
+  it("preserva intacto un registro ajeno al ejecutar el seed repetidamente", async () => {
+    const foreignProvider = await prisma.provider.create({
+      data: {
+        cuit: "20999999999",
+        businessName: "Registro Ajeno Controlado",
+        province: null,
+        locality: "Localidad Ajena",
+        email: "ajeno@control.example",
+        phone: "00123456789",
+        status: ProviderStatus.INACTIVE
+      }
+    });
+
+    await seedProviders(prisma);
+    await seedProviders(prisma);
+
+    expect(
+      await prisma.provider.findUnique({ where: { id: foreignProvider.id } })
+    ).toEqual(foreignProvider);
+    expect(
+      await prisma.provider.count({ where: { cuit: { in: managedCuits } } })
+    ).toBe(30);
+    expect(await prisma.provider.count()).toBe(31);
+  });
+
+  it("expone tres páginas completas y una cuarta vacía mediante la API real", async () => {
+    await seedProviders(prisma);
+
+    const responses = await Promise.all(
+      [1, 2, 3, 4].map((page) =>
+        request(app).get(`/api/providers?page=${page}&pageSize=10`)
+      )
+    );
+
+    expect(responses.map((response) => response.status)).toEqual([200, 200, 200, 200]);
+    expect(responses.map((response) => response.body.items.length)).toEqual([10, 10, 10, 0]);
+    for (const [index, response] of responses.entries()) {
+      expect(response.body.pagination).toEqual({
+        page: index + 1,
+        pageSize: 10,
+        totalItems: 30,
+        totalPages: 3
+      });
+    }
+  });
+
+  it("expone 20 ACTIVE y 10 INACTIVE mediante los filtros reales", async () => {
+    await seedProviders(prisma);
+
+    const [active, inactive] = await Promise.all([
+      request(app).get("/api/providers?status=ACTIVE&pageSize=100"),
+      request(app).get("/api/providers?status=INACTIVE&pageSize=100")
+    ]);
+
+    expect(active.status).toBe(200);
+    expect(active.body.items).toHaveLength(20);
+    expect(active.body.pagination).toEqual({
+      page: 1,
+      pageSize: 100,
+      totalItems: 20,
+      totalPages: 1
+    });
+    expect(
+      active.body.items.every((provider: { status: string }) => provider.status === "ACTIVE")
+    ).toBe(true);
+
+    expect(inactive.status).toBe(200);
+    expect(inactive.body.items).toHaveLength(10);
+    expect(inactive.body.pagination).toEqual({
+      page: 1,
+      pageSize: 100,
+      totalItems: 10,
+      totalPages: 1
+    });
+    expect(
+      inactive.body.items.every(
+        (provider: { status: string }) => provider.status === "INACTIVE"
+      )
+    ).toBe(true);
   });
 });

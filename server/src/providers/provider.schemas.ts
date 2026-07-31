@@ -1,10 +1,11 @@
 import { z } from "zod";
+import { digitsOnly } from "./provider.normalization.js";
 
 const cuitSchema = z
   .string({ error: "CUIT obligatorio" })
   .trim()
   .min(1, "CUIT obligatorio")
-  .transform((value) => value.replace(/\D/g, ""))
+  .transform(digitsOnly)
   .refine((value) => value.length === 11, {
     message: "El CUIT debe contener exactamente 11 dígitos"
   });
@@ -34,13 +35,26 @@ const nullableText = (maximum: number, field: string) =>
     .optional()
     .transform((value) => (value === undefined || value === "" ? null : value));
 
+const phoneSchema = z
+  .union([z.string(), z.null()])
+  .optional()
+  .transform((value) => {
+    if (value === undefined || value === null) return null;
+
+    const normalized = digitsOnly(value);
+    return normalized === "" ? null : normalized;
+  })
+  .refine((value) => value === null || value.length <= 30, {
+    message: "Teléfono no puede superar 30 dígitos"
+  });
+
 const editableProviderFields = {
   cuit: cuitSchema,
   businessName: businessNameSchema,
   province: nullableText(100, "Provincia"),
   locality: nullableText(100, "Localidad"),
   email: emailSchema,
-  phone: nullableText(30, "Teléfono")
+  phone: phoneSchema
 };
 
 export const createProviderBodySchema = z.object(editableProviderFields).strict();
