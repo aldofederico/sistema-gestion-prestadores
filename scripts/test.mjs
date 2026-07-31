@@ -3,10 +3,11 @@ import { spawnSync } from "node:child_process";
 const isWindows = process.platform === "win32";
 const npmCommand = isWindows ? "npm.cmd" : "npm";
 const npxCommand = isWindows ? "npx.cmd" : "npx";
+const composeProjectName = "sistema-gestion-prestadores-test";
 const composeArguments = [
   "compose",
-  "-f",
-  "compose.yaml",
+  "--project-name",
+  composeProjectName,
   "-f",
   "compose.test.yaml"
 ];
@@ -70,6 +71,14 @@ try {
   }
 
   if (!databaseHealthy) {
+    const logs = capture("docker", [
+      ...composeArguments,
+      "logs",
+      "--no-color",
+      "db"
+    ]);
+    if (logs.stdout) console.error(logs.stdout);
+    if (logs.stderr) console.error(logs.stderr);
     throw new Error("PostgreSQL no alcanzó estado saludable para las pruebas.");
   }
 
@@ -126,10 +135,14 @@ try {
   exitCode = 1;
 } finally {
   if (infrastructureStarted) {
-    const teardown = spawnSync("docker", [...composeArguments, "down"], {
-      cwd: process.cwd(),
-      stdio: "inherit"
-    });
+    const teardown = spawnSync(
+      "docker",
+      [...composeArguments, "down", "--volumes", "--remove-orphans"],
+      {
+        cwd: process.cwd(),
+        stdio: "inherit"
+      }
+    );
     if (teardown.status !== 0 && exitCode === 0) {
       exitCode = teardown.status ?? 1;
     }
