@@ -1,8 +1,12 @@
 # Habilitadores técnicos V2
 
-Los habilitadores sostienen requisitos funcionales, calidad y trazabilidad. No son historias de usuario y su estado inicial es `PLANNED`.
+Los habilitadores sostienen requisitos funcionales, calidad y trazabilidad. No
+son historias de usuario. Su estado inicial fue `PLANNED`; los estados finales
+se registran después de TP-006.
 
 ## EN-V2-001 — Utilidades frontend de normalización y formato
+
+Estado final: `IMPLEMENTED_AND_VALIDATED`
 
 - Propósito: centralizar saneamiento, valor canónico y presentación del CUIT y teléfono.
 - Requisitos relacionados: `V2-REQ-001`, `V2-REQ-002`.
@@ -13,6 +17,8 @@ Los habilitadores sostienen requisitos funcionales, calidad y trazabilidad. No s
 
 ## EN-V2-002 — Normalización defensiva backend
 
+Estado final: `IMPLEMENTED_AND_VALIDATED`
+
 - Propósito: proteger persistencia y búsqueda aunque un cliente omita el saneamiento.
 - Requisitos relacionados: `V2-REQ-001`, `V2-REQ-002`.
 - Resultado esperado: CUIT canónico de 11 dígitos y teléfono de hasta 30 dígitos o `null`.
@@ -21,6 +27,8 @@ Los habilitadores sostienen requisitos funcionales, calidad y trazabilidad. No s
 - Pruebas asociadas: `C-14`, `C-15`, `C-18`, `T-13` a `T-17`.
 
 ## EN-V2-003 — Dataset determinista y testeable
+
+Estado final: `IMPLEMENTED_AND_VALIDATED`
 
 - Propósito: disponer de 30 miembros iniciales reproducibles para paginación y filtros.
 - Requisito relacionado: `V2-REQ-003`.
@@ -31,6 +39,8 @@ Los habilitadores sostienen requisitos funcionales, calidad y trazabilidad. No s
 
 ## EN-V2-004 — Ciclo formal TP-006
 
+Estado final: `COMPLETED`
+
 - Propósito: definir aceptación antes de implementar y separar protocolo de evidencia observada.
 - Requisitos relacionados: los tres requisitos V2.
 - Resultado esperado: casos, tipos, precondiciones y expected results aprobados; informe posterior verificable.
@@ -40,9 +50,21 @@ Los habilitadores sostienen requisitos funcionales, calidad y trazabilidad. No s
 
 ## EN-V2-005 — Trazabilidad y telemetría V2
 
+Estado final: `COMPLETED`
+
 - Propósito: relacionar requisito, regla, código, prueba, commit, tiempo e incidencia.
 - Requisitos relacionados: gobierno transversal de V2.
 - Resultado esperado: matriz actualizada por etapa y ejecución registrada sin métricas inventadas.
 - Exclusiones: usar telemetría como sustituto de pruebas o modificar retrospectivamente evidencia V1.
 - Riesgos: documentación contradictoria, tiempos falsos o pérdida de decisiones.
 - Pruebas asociadas: gates documentales `Q-09` y `Q-10`.
+
+## Evidencia final
+
+- C2 y C3 implementaron normalización y dataset.
+- C2A incorporó las pruebas `*.test.ts` al pipeline estándar.
+- C3A corrigió C-16 y C-17.
+- La suite final contiene 99 pruebas únicas.
+- TP-006 terminó `PASS_WITH_OBSERVATIONS`, sin defectos funcionales abiertos.
+- El informe de ejecución, la matriz final y la retrospectiva completan EN-V2-004
+  y EN-V2-005.

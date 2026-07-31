@@ -22,6 +22,7 @@ No cambiar arquitectura, dependencias, schema, migraciones, servicios Docker ni 
 - V1 aprobada: `91df3e5b300fba1d050ef9250164849852d3ef9a`.
 - V1 contiene cuatro commits y no debe reescribirse.
 - Rama de implementación V2: `v2/implementacion`.
+- V2 está implementada y validada localmente; su publicación sigue pendiente.
 - No usar amend, rebase destructivo, squash retrospectivo ni force push.
 - No publicar V2 hasta completar implementación, TP-006, aceptación y autorización específicas.
 - No versionar secretos, `.env`, dependencias, builds, coverage, logs, datos ni archivos privados de IDE.
@@ -92,6 +93,10 @@ No implementar módulos, endpoints o mejoras fuera del cambio autorizado. Valida
 
 Comandos mínimos: `npm.cmd run lint`, `npm.cmd run typecheck`, `npm.cmd run test:unit`, `npm.cmd test`, `npm.cmd run build`, `npm.cmd run db:generate` y los gates Docker autorizados.
 
+El estado final V2 contiene 99 pruebas únicas. Los scripts de pruebas pueden
+afectar el Compose principal si no usan aislamiento explícito; verificar
+servicios, project name y dataset antes de ejecutar una campaña.
+
 TP-006 es obligatorio para V2:
 
 - el protocolo se versiona antes de implementar;
@@ -114,3 +119,19 @@ El informe debe incluir resultado, resumen, archivos, dependencias, validaciones
 - Revisar alcance y riesgos al alcanzar 14 horas.
 - Detenerse a las 16 horas sin nueva autorización.
 - Contingencia máxima estimada: 21–23 horas, sujeta a autorización.
+
+## Estado vigente de V2
+
+- Línea base V1 preservada en `91df3e5b300fba1d050ef9250164849852d3ef9a`.
+- Rama local: `v2/implementacion`.
+- Implementación y validación V2 completadas.
+- TP-006: `PASS_WITH_OBSERVATIONS`.
+- Pruebas únicas finales: 99.
+- Defectos funcionales abiertos: ninguno.
+- Publicación, fusión y push: pendientes de autorización específica.
+- No ejecutar cambios adicionales sin autorización.
+- No usar amend ni force push y no reescribir la historia V1.
+- Codex y Cursor no editan simultáneamente.
+- Cursor queda reservado para Browser cuando Codex no disponga de ese canal.
+- Antes de cada campaña verificar Git, Docker, aislamiento y dataset; servicios
+  activos no constituyen por sí solos un ambiente mutado.

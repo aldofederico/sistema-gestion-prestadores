@@ -68,8 +68,10 @@ docker compose up --build
 ## Datos iniciales
 
 El arranque aplica las migraciones y ejecuta un seed idempotente. El seed crea
-tres prestadores ficticios mediante `upsert` por CUIT: dos activos y uno
-inactivo. Ejecutarlo nuevamente no duplica registros.
+un dataset administrado de 30 prestadores ficticios mediante `upsert` por CUIT:
+20 activos y 10 inactivos. Conserva los tres registros V1, agrega 27 y no
+elimina datos ajenos. Con `pageSize=10` produce tres páginas completas y una
+cuarta vacía. Ejecutarlo nuevamente no duplica registros.
 
 El estado inicial de un prestador nuevo es `ACTIVE`. Un prestador desactivado
 permanece físicamente almacenado y puede reactivarse.
@@ -95,6 +97,14 @@ desarrollo `providers` no se usa en las pruebas de integración.
 
 Las pruebas cubren health, validaciones, contratos API, persistencia, búsqueda,
 filtros, paginación, formularios, mutaciones, feedback y variantes responsive.
+El estado final V2 contiene 99 pruebas únicas verdes.
+
+El protocolo V2 previo a la ejecución está en
+[`docs/testing/TP-006_TEST_PROTOCOL.md`](docs/testing/TP-006_TEST_PROTOCOL.md);
+el resultado observado está en
+[`docs/testing/TP-006_TEST_EXECUTION_REPORT.md`](docs/testing/TP-006_TEST_EXECUTION_REPORT.md)
+y la retrospectiva en
+[`docs/process/V2_RETROSPECTIVE.md`](docs/process/V2_RETROSPECTIVE.md).
 El checklist manual reutilizable está en
 [`docs/ACCEPTANCE_CHECKLIST.md`](docs/ACCEPTANCE_CHECKLIST.md).
 
@@ -143,10 +153,13 @@ No existe endpoint `DELETE`.
 
 ## Validaciones
 
-- CUIT obligatorio, único y normalizado a exactamente 11 dígitos.
+- CUIT obligatorio, único y normalizado a exactamente 11 dígitos en API y
+  PostgreSQL; la interfaz aplica el formato visual `XX-XXXXXXXX-X`.
 - No se valida el dígito verificador del CUIT.
 - Razón social obligatoria.
 - Correo electrónico obligatorio, válido y normalizado a minúsculas.
+- Teléfono opcional, conservado como cadena de solo dígitos o `null`, con
+  máximo de 30 dígitos y sin truncamiento silencioso.
 - Campos opcionales vacíos almacenados como `null`.
 - Estado admitido: `ACTIVE` o `INACTIVE`.
 - `POST` fuerza el estado inicial `ACTIVE`.
@@ -165,6 +178,10 @@ scripts/            Arranque, limpieza y orquestación de pruebas
 compose.yaml        Ejecución principal
 compose.test.yaml   Exposición aislada de PostgreSQL para pruebas
 Dockerfile          Build multietapa y runtime de producción
+docs/testing/       Protocolos e informes de ejecución
+docs/process/       Logs y retrospectivas
+docs/product/       Historias, habilitadores y trazabilidad
+docs/v2/            Cambio y plan V2
 ```
 
 ## Decisiones técnicas
@@ -190,3 +207,11 @@ Dockerfile          Build multietapa y runtime de producción
 El alcance no incluye autenticación, autorización, Swagger, routing frontend,
 CI/CD ni despliegue. No existe eliminación física ni endpoint `DELETE`.
 Swagger no forma parte del challenge y la autenticación no fue requerida.
+
+## Estado V2
+
+Estado de esta rama: V2 validada, pendiente de publicación.
+
+TP-006 finalizó `PASS_WITH_OBSERVATIONS`: todos los casos y gates pasaron, los
+dos defectos MEDIUM detectados fueron corregidos y verificados, y no quedan
+defectos funcionales abiertos. La rama no fue fusionada ni publicada.

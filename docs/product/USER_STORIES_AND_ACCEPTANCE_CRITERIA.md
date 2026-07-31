@@ -2,9 +2,13 @@
 
 ## Alcance
 
-Este documento contiene únicamente historias funcionales observables por el operador. Su estado inicial es `PLANNED`; no implica implementación ni pruebas ejecutadas.
+Este documento contiene únicamente historias funcionales observables por el
+operador. Su estado inicial fue `PLANNED`; los estados finales se actualizaron
+después de ejecutar TP-006.
 
 ## US-V2-001 — CUIT
+
+Estado final: `ACCEPTED`
 
 Como operador administrativo, quiero ingresar y visualizar el CUIT con su formato convencional, para reducir errores de carga y reconocer el dato con mayor facilidad.
 
@@ -30,6 +34,8 @@ Como operador administrativo, quiero ingresar y visualizar el CUIT con su format
 
 ## US-V2-002 — Teléfono
 
+Estado final: `ACCEPTED`
+
 Como operador administrativo, quiero que el teléfono conserve exclusivamente dígitos, para registrar el dato de forma homogénea sin imponer una máscara regional.
 
 ### Criterios de aceptación
@@ -52,3 +58,14 @@ Como operador administrativo, quiero que el teléfono conserve exclusivamente d�
 ## V2-REQ-003
 
 `V2-REQ-003` es un habilitador técnico y no una historia de usuario. El dataset permite verificar paginación, filtros, Docker e idempotencia, pero no describe una interacción funcional nueva del operador.
+
+## Evidencia de aceptación
+
+- `US-V2-001`: C-01 a C-18 PASS; incluye corrección y reauditoría de C-16 y
+  C-17 en `6eae92ef47a3c68fb9e1a396630b398a35efdc03`.
+- `US-V2-002`: T-01 a T-17 PASS; teléfono limitado a 30 dígitos, exceso
+  rechazado, `null` y ceros iniciales preservados.
+- Informe: `docs/testing/TP-006_TEST_EXECUTION_REPORT.md`.
+- Estado global: `TP-006: PASS_WITH_OBSERVATIONS`.
+
+No se creó una historia para el dataset.

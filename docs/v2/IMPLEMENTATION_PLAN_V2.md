@@ -1,5 +1,11 @@
 # Plan de implementación V2
 
+Estado: `EXECUTION_COMPLETE_PENDING_PUBLICATION`
+
+Las secciones de secuencia, impacto y commits previstos conservan el plan
+original. El apartado de ejecución al final distingue lo previsto de lo
+realmente realizado.
+
 ## Objetivo y base
 
 Planificar la implementación controlada de `CR-V2-001` desde la línea base V1 `91df3e5b300fba1d050ef9250164849852d3ef9a`, sin modificar arquitectura, contratos públicos, dependencias, schema ni migraciones.
@@ -93,3 +99,40 @@ Al alcanzar el umbral se revisarán riesgos, alcance y trabajo restante. Al alca
 ## Detención y rollback
 
 Detener la implementación si se requiere una dependencia, migración, cambio de API/arquitectura, si una prueba permanece fallando tras los ciclos autorizados o si se detecta riesgo sobre datos ajenos. El rollback se limita a commits V2 y nunca reescribe V1.
+
+## Ejecución real
+
+- Implementación: completada.
+- Pruebas automatizadas y técnicas: completadas.
+- Auditoría desktop, mobile y accesibilidad: completada.
+- Documentación final: completada durante V2-08.
+- Publicación: todavía pendiente.
+- TP-006: `PASS_WITH_OBSERVATIONS`.
+- Defectos funcionales abiertos: ninguno.
+
+### Commits ejecutados
+
+| Clasificación | Commit | Relación con el plan |
+|---|---|---|
+| C1 | `0e61d35ad210685ba3827dac7d991b4a3fc3cce8` | Previsto |
+| C2 | `09f6313e8b5744292202ee74752d8ef6f34e2095` | Previsto |
+| C2A | `979ec3cc3f0395b30286728491ac3d2f98df1ab2` | Corrección controlada no prevista: discovery de `*.test.ts` |
+| C3 | `d3e019c2fbb5864bc800665c4ef9907a1b79ac72` | Previsto |
+| C3A | `6eae92ef47a3c68fb9e1a396630b398a35efdc03` | Corrección controlada no prevista: C-16 y C-17 |
+
+El commit documental final corresponde al cuarto mensaje previsto y se crea
+solo después de validar los diez documentos autorizados.
+
+### Desviaciones e iteraciones
+
+- C2A corrigió una omisión del patrón de discovery de Vitest.
+- V2-07 detectó dos defectos MEDIUM reproducibles y quedó `BLOCKED`.
+- C3A corrigió ambos defectos y agregó doce pruebas.
+- El primer V2-07B quedó `BLOCKED` porque Browser/CDP de Codex no estuvo
+  disponible y el ambiente tenía un registro ajeno.
+- V2-07B-R se ejecutó mediante Cursor Browser sobre el ambiente restaurado y
+  terminó `COMPLETE`.
+- Los estados `BLOCKED` intermedios se preservan como historial; no contradicen
+  el cierre final.
+- `docs/ACCEPTANCE_CHECKLIST.md` permanece como evidencia V1 y no fue
+  reescrito durante el cierre V2.
