@@ -72,6 +72,26 @@ const fillRequiredFields = (dialog: HTMLElement) => {
   });
 };
 
+const openCuitReadyForEditing = async () => {
+  const dialog = await openCreateDialog();
+  const cuit = within(dialog).getByLabelText("CUIT") as HTMLInputElement;
+  fireEvent.change(cuit, { target: { value: "20-12345678-9" } });
+  await waitFor(() => expect(cuit).toHaveValue("20-12345678-9"));
+  return cuit;
+};
+
+const expectCuitValueAndCaret = async (
+  input: HTMLInputElement,
+  value: string,
+  caret: number
+) => {
+  await waitFor(() => {
+    expect(input).toHaveValue(value);
+    expect(input.selectionStart).toBe(caret);
+    expect(input.selectionEnd).toBe(caret);
+  });
+};
+
 beforeEach(() => {
   fetchMock.mockReset();
   fetchMock.mockResolvedValue(jsonResponse(emptyList));
@@ -211,6 +231,83 @@ describe("Gestión de prestadores", () => {
     expect(cuit).toHaveValue("20-1");
     fireEvent.change(cuit, { target: { value: "20 # 1234.5678 / 9 extra 999" } });
     expect(cuit).toHaveValue("20-12345678-9");
+  });
+
+  it("Delete antes del primer guion elimina el siguiente dígito lógico", async () => {
+    render(<App />);
+    const cuit = await openCuitReadyForEditing();
+    cuit.focus();
+    cuit.setSelectionRange(2, 2);
+
+    fireEvent.keyDown(cuit, { key: "Delete" });
+
+    await expectCuitValueAndCaret(cuit, "20-23456789", 2);
+  });
+
+  it("Delete antes del segundo guion elimina el siguiente dígito lógico", async () => {
+    render(<App />);
+    const cuit = await openCuitReadyForEditing();
+    cuit.focus();
+    cuit.setSelectionRange(11, 11);
+
+    fireEvent.keyDown(cuit, { key: "Delete" });
+
+    await expectCuitValueAndCaret(cuit, "20-12345678", 11);
+  });
+
+  it("Backspace después del primer guion elimina el dígito lógico anterior", async () => {
+    render(<App />);
+    const cuit = await openCuitReadyForEditing();
+    cuit.focus();
+    cuit.setSelectionRange(3, 3);
+
+    fireEvent.keyDown(cuit, { key: "Backspace" });
+
+    await expectCuitValueAndCaret(cuit, "21-23456789", 1);
+  });
+
+  it("Backspace después del segundo guion elimina el dígito lógico anterior", async () => {
+    render(<App />);
+    const cuit = await openCuitReadyForEditing();
+    cuit.focus();
+    cuit.setSelectionRange(12, 12);
+
+    fireEvent.keyDown(cuit, { key: "Backspace" });
+
+    await expectCuitValueAndCaret(cuit, "20-12345679", 10);
+  });
+
+  it("permite repetir Delete junto al separador sin atrapar el caret", async () => {
+    render(<App />);
+    const cuit = await openCuitReadyForEditing();
+    cuit.focus();
+    cuit.setSelectionRange(2, 2);
+
+    fireEvent.keyDown(cuit, { key: "Delete" });
+    await expectCuitValueAndCaret(cuit, "20-23456789", 2);
+    fireEvent.keyDown(cuit, { key: "Delete" });
+
+    await expectCuitValueAndCaret(cuit, "20-3456789", 2);
+  });
+
+  it("mantiene la semántica normal al reemplazar una selección del CUIT", async () => {
+    render(<App />);
+    const cuit = await openCuitReadyForEditing();
+    cuit.focus();
+    cuit.setSelectionRange(3, 5);
+
+    expect(fireEvent.keyDown(cuit, { key: "Delete" })).toBe(true);
+    expect(cuit).toHaveValue("20-12345678-9");
+
+    fireEvent.change(cuit, {
+      target: {
+        value: "20-9345678-9",
+        selectionStart: 4,
+        selectionEnd: 4
+      }
+    });
+
+    await expectCuitValueAndCaret(cuit, "20-93456789", 4);
   });
 
   it("muestra error para CUIT inválido", async () => {
@@ -353,6 +450,116 @@ describe("Gestión de prestadores", () => {
     expect(within(dialog).getByLabelText("CUIT")).toHaveValue("20-12345678-9");
     expect(within(dialog).getByLabelText("Razón social")).toHaveValue("Prestador Uno");
     expect(within(dialog).getByLabelText("Teléfono")).toHaveValue("02215550101");
+  });
+
+  it("restaura el foco al trigger de alta al cancelar", async () => {
+    render(<App />);
+    const trigger = screen.getByRole("button", { name: "Nuevo prestador" });
+    trigger.focus();
+    fireEvent.click(trigger);
+    const dialog = await screen.findByRole("dialog", { name: "Nuevo prestador" });
+
+    fireEvent.click(within(dialog).getByRole("button", { name: "Cancelar" }));
+
+    await waitFor(() => expect(document.activeElement).toBe(trigger));
+  });
+
+  it("restaura el foco al trigger de alta al cerrar con Escape", async () => {
+    render(<App />);
+    const trigger = screen.getByRole("button", { name: "Nuevo prestador" });
+    trigger.focus();
+    fireEvent.click(trigger);
+    const dialog = await screen.findByRole("dialog", { name: "Nuevo prestador" });
+
+    fireEvent.keyDown(dialog, { key: "Escape", code: "Escape" });
+
+    await waitFor(() => expect(document.activeElement).toBe(trigger));
+  });
+
+  it("restaura el foco al trigger de edición desktop al cancelar", async () => {
+    fetchMock.mockResolvedValue(jsonResponse(listWithProvider()));
+    render(<App />);
+    await screen.findByText("1 prestador encontrado");
+    const tableView = screen.getByRole("region", {
+      name: "Vista de tabla de prestadores"
+    });
+    const trigger = within(tableView).getByRole("button", {
+      name: "Editar Prestador Uno"
+    });
+    trigger.focus();
+    fireEvent.click(trigger);
+    const dialog = await screen.findByRole("dialog", { name: "Editar prestador" });
+
+    fireEvent.click(within(dialog).getByRole("button", { name: "Cancelar" }));
+
+    await waitFor(() => expect(document.activeElement).toBe(trigger));
+  });
+
+  it("restaura el foco al trigger de edición desktop con Escape", async () => {
+    fetchMock.mockResolvedValue(jsonResponse(listWithProvider()));
+    render(<App />);
+    await screen.findByText("1 prestador encontrado");
+    const tableView = screen.getByRole("region", {
+      name: "Vista de tabla de prestadores"
+    });
+    const trigger = within(tableView).getByRole("button", {
+      name: "Editar Prestador Uno"
+    });
+    trigger.focus();
+    fireEvent.click(trigger);
+    const dialog = await screen.findByRole("dialog", { name: "Editar prestador" });
+
+    fireEvent.keyDown(dialog, { key: "Escape", code: "Escape" });
+
+    await waitFor(() => expect(document.activeElement).toBe(trigger));
+  });
+
+  it("restaura el foco al trigger de edición tras guardar correctamente", async () => {
+    fetchMock.mockImplementation(async (_input, init) =>
+      jsonResponse(init?.method === "PUT" ? provider : listWithProvider())
+    );
+    render(<App />);
+    await screen.findByText("1 prestador encontrado");
+    const tableView = screen.getByRole("region", {
+      name: "Vista de tabla de prestadores"
+    });
+    const trigger = within(tableView).getByRole("button", {
+      name: "Editar Prestador Uno"
+    });
+    const main = screen.getByRole("main");
+    trigger.focus();
+    fireEvent.click(trigger);
+    const dialog = await screen.findByRole("dialog", { name: "Editar prestador" });
+    fireEvent.change(within(dialog).getByLabelText("Razón social"), {
+      target: { value: "Prestador Uno Actualizado" }
+    });
+
+    fireEvent.click(within(dialog).getByRole("button", { name: "Guardar cambios" }));
+
+    await waitFor(() => {
+      expect(fetchMock.mock.calls.some((call) => call[1]?.method === "PUT")).toBe(true);
+      expect(trigger).not.toBeInTheDocument();
+      expect(document.activeElement).toBe(main);
+    });
+  });
+
+  it("restaura el foco al trigger de edición de la tarjeta mobile", async () => {
+    fetchMock.mockResolvedValue(jsonResponse(listWithProvider()));
+    render(<App />);
+    await screen.findByText("1 prestador encontrado");
+    const cardView = screen.getByRole("region", {
+      name: "Vista de tarjetas de prestadores"
+    });
+    const trigger = within(cardView).getByRole("button", {
+      name: "Editar Prestador Uno"
+    });
+    trigger.focus();
+    fireEvent.click(trigger);
+    const dialog = await screen.findByRole("dialog", { name: "Editar prestador" });
+
+    fireEvent.click(within(dialog).getByRole("button", { name: "Cancelar" }));
+
+    await waitFor(() => expect(document.activeElement).toBe(trigger));
   });
 
   it("edición ejecuta PUT sin status", async () => {

@@ -20,7 +20,11 @@ import {
   providerFormSchema,
   providerToFormValues
 } from "../schemas/provider";
-import { digitsOnly, formatPartialCuit } from "../utils/provider-normalization";
+import {
+  digitsOnly,
+  formatPartialCuit,
+  toCanonicalCuit
+} from "../utils/provider-normalization";
 import type {
   Provider,
   ProviderFormValues,
@@ -32,6 +36,7 @@ type ProviderFormDialogProps = {
   mode: "create" | "edit";
   provider: Provider | null;
   onClose: () => void;
+  onExited: () => void;
   onSubmit: (payload: ProviderPayload) => Promise<void>;
 };
 
@@ -62,11 +67,51 @@ const caretPositionAfterDigits = (value: string, digitCount: number) => {
   return value.length;
 };
 
+const editCuitNextToSeparator = (
+  value: string,
+  selectionStart: number | null,
+  selectionEnd: number | null,
+  key: string
+) => {
+  if (
+    selectionStart === null ||
+    selectionEnd === null ||
+    selectionStart !== selectionEnd
+  ) {
+    return null;
+  }
+
+  const deleteAfterSeparator =
+    key === "Delete" && value[selectionStart] === "-";
+  const backspaceBeforeSeparator =
+    key === "Backspace" &&
+    selectionStart > 0 &&
+    value[selectionStart - 1] === "-";
+
+  if (!deleteAfterSeparator && !backspaceBeforeSeparator) return null;
+
+  const digits = toCanonicalCuit(value);
+  const digitsBeforeCaret = digitsOnly(value.slice(0, selectionStart)).length;
+  const digitIndex = deleteAfterSeparator
+    ? digitsBeforeCaret
+    : digitsBeforeCaret - 1;
+
+  if (digitIndex < 0 || digitIndex >= digits.length) return null;
+
+  const nextDigits =
+    digits.slice(0, digitIndex) + digits.slice(digitIndex + 1);
+  return {
+    value: formatPartialCuit(nextDigits),
+    digitsBeforeCaret: digitIndex
+  };
+};
+
 export function ProviderFormDialog({
   open,
   mode,
   provider,
   onClose,
+  onExited,
   onSubmit
 }: ProviderFormDialogProps) {
   const cuitInputRef = useRef<HTMLInputElement | null>(null);
@@ -158,8 +203,26 @@ export function ProviderFormDialog({
     onClose();
   };
 
+  const restoreCuitCaret = (value: string, digitCount: number) => {
+    if (cuitCaretFrameRef.current !== null) {
+      window.cancelAnimationFrame(cuitCaretFrameRef.current);
+    }
+    cuitCaretFrameRef.current = window.requestAnimationFrame(() => {
+      const input = cuitInputRef.current;
+      if (!input) return;
+      const position = caretPositionAfterDigits(value, digitCount);
+      input.setSelectionRange(position, position);
+    });
+  };
+
   return (
-    <Dialog open={open} onClose={close} fullWidth maxWidth="sm">
+    <Dialog
+      open={open}
+      onClose={close}
+      fullWidth
+      maxWidth="sm"
+      slotProps={{ transition: { onExited } }}
+    >
       <Box component="form" onSubmit={handleSubmit(submit)} noValidate>
         <DialogTitle>
           {mode === "create" ? "Nuevo prestador" : "Editar prestador"}
@@ -191,16 +254,23 @@ export function ProviderFormDialog({
                     const formatted = formatPartialCuit(event.target.value);
 
                     field.onChange(formatted);
+                    restoreCuitCaret(formatted, precedingDigits);
+                  }}
+                  onKeyDown={(event) => {
+                    const input = cuitInputRef.current;
+                    if (!input) return;
 
-                    if (cuitCaretFrameRef.current !== null) {
-                      window.cancelAnimationFrame(cuitCaretFrameRef.current);
-                    }
-                    cuitCaretFrameRef.current = window.requestAnimationFrame(() => {
-                      const input = cuitInputRef.current;
-                      if (!input) return;
-                      const position = caretPositionAfterDigits(formatted, precedingDigits);
-                      input.setSelectionRange(position, position);
-                    });
+                    const edit = editCuitNextToSeparator(
+                      input.value,
+                      input.selectionStart,
+                      input.selectionEnd,
+                      event.key
+                    );
+                    if (!edit) return;
+
+                    event.preventDefault();
+                    field.onChange(edit.value);
+                    restoreCuitCaret(edit.value, edit.digitsBeforeCaret);
                   }}
                   inputRef={(element: HTMLInputElement | null) => {
                     field.ref(element);

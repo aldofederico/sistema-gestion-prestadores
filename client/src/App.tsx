@@ -59,6 +59,8 @@ export default function App() {
   const [statusSubmitting, setStatusSubmitting] = useState(false);
   const [feedback, setFeedback] = useState<Feedback | null>(null);
   const activeRequest = useRef<AbortController | null>(null);
+  const formTriggerRef = useRef<HTMLElement | null>(null);
+  const mainRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -143,12 +145,21 @@ export default function App() {
     setPage(1);
   };
 
+  const rememberFormTrigger = () => {
+    formTriggerRef.current =
+      document.activeElement instanceof HTMLElement
+        ? document.activeElement
+        : null;
+  };
+
   const openCreate = () => {
+    rememberFormTrigger();
     setSelectedProvider(null);
     setFormMode("create");
   };
 
   const openEdit = (provider: Provider) => {
+    rememberFormTrigger();
     setSelectedProvider(provider);
     setFormMode("edit");
   };
@@ -156,6 +167,21 @@ export default function App() {
   const closeForm = () => {
     setFormMode(null);
     setSelectedProvider(null);
+  };
+
+  const restoreFormFocus = () => {
+    const trigger = formTriggerRef.current;
+    formTriggerRef.current = null;
+
+    if (
+      trigger?.isConnected &&
+      !(trigger instanceof HTMLButtonElement && trigger.disabled)
+    ) {
+      trigger.focus();
+      if (document.activeElement === trigger) return;
+    }
+
+    mainRef.current?.focus();
   };
 
   const saveProvider = async (payload: ProviderPayload) => {
@@ -243,7 +269,12 @@ export default function App() {
   const totalItems = listResponse?.pagination.totalItems ?? 0;
 
   return (
-    <Box component="main" sx={{ minHeight: "100vh", py: { xs: 3, md: 5 } }}>
+    <Box
+      component="main"
+      ref={mainRef}
+      tabIndex={-1}
+      sx={{ minHeight: "100vh", py: { xs: 3, md: 5 } }}
+    >
       <Container maxWidth="xl">
         <Stack sx={{ gap: 3 }}>
           <Box>
@@ -362,6 +393,7 @@ export default function App() {
         mode={formMode ?? "create"}
         provider={selectedProvider}
         onClose={closeForm}
+        onExited={restoreFormFocus}
         onSubmit={saveProvider}
       />
       <ProviderStatusDialog
