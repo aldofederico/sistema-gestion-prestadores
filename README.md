@@ -5,6 +5,23 @@
 Aplicación web para administrar prestadores de salud mediante una interfaz
 responsive y una API REST con persistencia PostgreSQL.
 
+## Demo pública
+
+La aplicación dispone de un entorno de demostración HTTPS sobre infraestructura
+gratuita de Render:
+
+- Aplicación: <https://sistema-gestion-prestadores.onrender.com>
+- Swagger UI: <https://sistema-gestion-prestadores.onrender.com/api/docs/>
+- OpenAPI JSON: <https://sistema-gestion-prestadores.onrender.com/api/openapi.json>
+- Health: <https://sistema-gestion-prestadores.onrender.com/api/health>
+
+El servicio puede experimentar un *cold start*, por lo que el primer acceso
+puede demorar. La demo contiene exclusivamente datos ficticios, expone una API
+sin autenticación y no debe utilizarse como entorno productivo ni asumirse como
+disponible permanentemente. Render informó la expiración de la base PostgreSQL
+gratuita para el 2026-08-30. La evidencia del smoke test público se encuentra en
+[`docs/deployment/RENDER_DEPLOYMENT_VALIDATION.md`](docs/deployment/RENDER_DEPLOYMENT_VALIDATION.md).
+
 ## Funcionalidades implementadas
 
 - Listado, búsqueda parcial por CUIT o razón social y filtro por estado.
@@ -223,7 +240,7 @@ render.yaml         Blueprint declarativo para Render
 | Swagger | Implementado en V2.1 | OpenAPI y Swagger UI |
 | Diseño responsive | Implementado | Tabla desktop y tarjetas mobile |
 | Tests | Implementado | Suite vigente V2.1: 129/129; QA manual documentado |
-| Deploy | Preparado, pendiente de publicación | render.yaml y guía Render |
+| Deploy | Implementado | Demo HTTPS publicada en Render |
 | Paginación | Implementado | Backend y frontend |
 | Variables de entorno | Implementado | .env.example y variables Render |
 
@@ -262,13 +279,14 @@ mismo origen que la aplicación:
 Swagger describe únicamente la API existente, no agrega autenticación ni
 endpoints de negocio y sirve sus activos desde la propia aplicación, sin CDN.
 
-## Deploy preparado
+## Deploy público de demostración
 
-El despliegue de demostración está preparado para Render, pero todavía no fue
-publicado ni tiene URL pública. `render.yaml` declara un Web Service Docker y
-Render Postgres separados del ambiente Docker Compose local. El procedimiento,
-los controles y el rollback están en
-[`docs/deployment/RENDER_DEPLOYMENT.md`](docs/deployment/RENDER_DEPLOYMENT.md).
+La demo HTTPS fue publicada en Render. `render.yaml` declara un Web Service
+Docker y Render Postgres separados del ambiente Docker Compose local. El
+procedimiento, los controles y el rollback están en
+[`docs/deployment/RENDER_DEPLOYMENT.md`](docs/deployment/RENDER_DEPLOYMENT.md),
+y el resultado observado se registra en
+[`docs/deployment/RENDER_DEPLOYMENT_VALIDATION.md`](docs/deployment/RENDER_DEPLOYMENT_VALIDATION.md).
 
 El plan gratuito implica suspensión por inactividad, arranque en frío, límites
 de uso y expiración de PostgreSQL; es una demo descartable, no infraestructura
@@ -287,9 +305,9 @@ productiva.
 
 El alcance no incluye autenticación, autorización, eliminación física,
 routing frontend, CI/CD ni infraestructura productiva. No existe endpoint
-`DELETE`. La demo cloud está preparada, pero todavía no fue creada ni publicada;
-Swagger es documentación de la API pública y no mitiga la ausencia deliberada de
-controles de acceso.
+`DELETE`. La demo cloud publicada es temporal y no productiva; Swagger es
+documentación de la API pública y no mitiga la ausencia deliberada de controles
+de acceso.
 
 ## Fotografía histórica de V2
 
@@ -308,7 +326,9 @@ de esta fotografía histórica.
 ## V2.1 — mejoras posteriores al cierre de V2
 
 V2.1 agrega, después de la fotografía histórica anterior, OpenAPI 3.0.4,
-Swagger UI y la preparación declarativa de una demo en Render. También hace
-explícitos los extras opcionales y el criterio detrás de las mejoras ya
-implementadas. Estos cambios no reinterpretan el estado que tenía V2 en su
-cierre ni afirman que exista un despliegue público.
+Swagger UI y una demo pública validada en Render. También hace explícitos los
+extras opcionales y el criterio detrás de las mejoras ya implementadas. Estos
+cambios no reinterpretan el estado que tenía V2 en su cierre.
+
+Estado V2.1: `DEPLOYED_AND_VALIDATED`. La validación pública está documentada en
+[`docs/deployment/RENDER_DEPLOYMENT_VALIDATION.md`](docs/deployment/RENDER_DEPLOYMENT_VALIDATION.md).
