@@ -118,8 +118,16 @@ describe("OpenAPI y Swagger UI", () => {
     });
   });
 
-  it("GET /api/docs devuelve 200", async () => {
-    expect((await request(app).get("/api/docs")).status).toBe(200);
+  it("GET /api/docs redirige a la ruta canónica funcional", async () => {
+    const redirect = await request(app).get("/api/docs");
+
+    expect(redirect.status).toBe(308);
+    expect(redirect.headers.location).toBe("/api/docs/");
+    expect(redirect.text).not.toContain("SwaggerUIBundle");
+
+    const canonical = await request(app).get(redirect.headers.location!);
+    expect(canonical.status).toBe(200);
+    expect(canonical.text).toContain("./swagger-ui-bundle.js");
   });
 
   it("GET /api/docs/ devuelve 200", async () => {
@@ -134,10 +142,37 @@ describe("OpenAPI y Swagger UI", () => {
     );
   });
 
-  it("el HTML carga la inicialización local con las opciones aprobadas", async () => {
+  it("el HTML carga activos locales resolubles y las opciones aprobadas", async () => {
     const html = await request(app).get("/api/docs/");
     const initialization = await request(app).get("/api/docs/swagger-ui-init.js");
+    const assetReferences = [
+      ...html.text.matchAll(/(?:href|src)="(\.\/[^"]+)"/g)
+    ].map((match) => match[1]!);
+    const resolvedAssets = assetReferences.map(
+      (reference) => new URL(reference, "http://localhost/api/docs/").pathname
+    );
+
     expect(html.text).toContain('./swagger-ui-init.js');
+    expect(resolvedAssets).toEqual(
+      expect.arrayContaining([
+        "/api/docs/swagger-ui.css",
+        "/api/docs/swagger-ui-bundle.js",
+        "/api/docs/swagger-ui-standalone-preset.js",
+        "/api/docs/swagger-ui-init.js"
+      ])
+    );
+    expect(resolvedAssets.every((asset) => asset.startsWith("/api/docs/"))).toBe(
+      true
+    );
+    expect(resolvedAssets).not.toEqual(
+      expect.arrayContaining([
+        "/api/swagger-ui.css",
+        "/api/swagger-ui-bundle.js",
+        "/api/swagger-ui-standalone-preset.js",
+        "/api/swagger-ui-init.js"
+      ])
+    );
+    expect(initialization.status).toBe(200);
     expect(initialization.text).toContain("SwaggerUIBundle");
     expect(initialization.text).toContain('"displayRequestDuration": true');
     expect(initialization.text).toContain('"persistAuthorization": false');
@@ -149,13 +184,22 @@ describe("OpenAPI y Swagger UI", () => {
     expect(response.headers["content-type"]).toMatch(/text\/css/);
   });
 
-  it("sirve el bundle principal desde la aplicación", async () => {
-    const response = await request(app).get("/api/docs/swagger-ui-bundle.js");
-    expect(response.status).toBe(200);
-    expect(response.headers["content-type"]).toMatch(/javascript/);
+  it("sirve los bundles principales solo desde la ruta canónica", async () => {
+    for (const asset of [
+      "swagger-ui-bundle.js",
+      "swagger-ui-standalone-preset.js"
+    ]) {
+      const response = await request(app).get(`/api/docs/${asset}`);
+      expect(response.status).toBe(200);
+      expect(response.headers["content-type"]).toMatch(/javascript/);
+
+      expect((await request(app).get(`/api/${asset}`)).status).toBe(404);
+    }
   });
 
-  it("conserva el 404 uniforme para una ruta API desconocida", async () => {
+  it("protege archivos internos y conserva el 404 API uniforme", async () => {
+    expect((await request(app).get("/api/docs/package.json")).status).toBe(404);
+
     const response = await request(app).get("/api/no-existe");
     expect(response.status).toBe(404);
     expect(response.body).toEqual({

@@ -21,5 +21,8 @@ openApiRouter.get("/openapi.json", (_request, response) => {
   response.json(openApiDocument);
 });
 
-openApiRouter.get(["/docs", "/docs/"], swaggerPage);
+openApiRouter.get(/^\/docs$/, (_request, response) => {
+  response.redirect(308, "/api/docs/");
+});
+openApiRouter.get("/docs/", swaggerPage);
 openApiRouter.use("/docs", ...swaggerAssets);
