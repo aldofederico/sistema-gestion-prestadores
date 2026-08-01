@@ -1,4 +1,22 @@
+name: sistema-gestion-prestadores-test
+
 services:
   db:
+    image: postgres:18
+    environment:
+      POSTGRES_USER: providers_user
+      POSTGRES_PASSWORD: providers_local_password
+      POSTGRES_DB: providers
     ports:
       - "127.0.0.1:5433:5432"
+    volumes:
+      - postgres_test_data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U providers_user -d providers"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+volumes:
+  postgres_test_data:
