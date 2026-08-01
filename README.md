@@ -115,6 +115,9 @@ desarrollo `providers` no se usa en las pruebas de integración.
 Las pruebas cubren health, validaciones, contratos API, persistencia, búsqueda,
 filtros, paginación, formularios, mutaciones, feedback y variantes responsive.
 El estado final V2 contiene 99 pruebas únicas verdes.
+V2.1 incorporó 30 pruebas específicas de OpenAPI y Swagger, por lo que la
+suite automatizada vigente de V2.1 contiene 129 pruebas. Resultado validado
+localmente antes del despliegue público: 129/129 PASS.
 
 El protocolo V2 previo a la ejecución está en
 [`docs/testing/TP-006_TEST_PROTOCOL.md`](docs/testing/TP-006_TEST_PROTOCOL.md);
@@ -219,7 +222,7 @@ render.yaml         Blueprint declarativo para Render
 | Docker | Implementado | Dockerfile y Docker Compose |
 | Swagger | Implementado en V2.1 | OpenAPI y Swagger UI |
 | Diseño responsive | Implementado | Tabla desktop y tarjetas mobile |
-| Tests | Implementado | Suite automática y QA manual |
+| Tests | Implementado | Suite vigente V2.1: 129/129; QA manual documentado |
 | Deploy | Preparado, pendiente de publicación | render.yaml y guía Render |
 | Paginación | Implementado | Backend y frontend |
 | Variables de entorno | Implementado | .env.example y variables Render |
