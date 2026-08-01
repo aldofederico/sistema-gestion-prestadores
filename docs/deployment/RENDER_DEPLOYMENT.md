@@ -2,7 +2,24 @@
 
 ## Propósito y estado
 
-Esta guía describe cómo crear una demostración descartable del Sistema de Gestión de Prestadores mediante el Blueprint versionado en `render.yaml`. La configuración está preparada, pero V2.1-01 no creó recursos cloud ni ejecutó un despliegue. No representa infraestructura productiva.
+Esta guía describe cómo crear y operar una demostración descartable del Sistema de Gestión de Prestadores mediante el Blueprint versionado en `render.yaml`. V2.1-01 preparó la configuración y posteriormente se creó y validó una instancia pública. No representa infraestructura productiva.
+
+## Instancia de demostración creada
+
+- URL pública: <https://sistema-gestion-prestadores.onrender.com>
+- Blueprint: `sistema-gestion-prestadores-demo`
+- Web Service: `sistema-gestion-prestadores`
+- Base: `sistema-gestion-prestadores-db`, estado `Available`
+- Proveedor y runtime: Render, Docker
+- Región: Virginia (US East)
+- Planes: Web Service `Free` y PostgreSQL `Free`
+- PostgreSQL: 18
+- Health validado: HTTP 200 con `{"status":"ok","database":"up"}`
+- Fecha local de validación: 2026-07-31
+- Commit del primer deploy validado: `ab400ad4b5a8e4d8733894682f58454f9225aa17`
+- Expiración informada por Render para la base: 2026-08-30
+
+La instancia es temporal, puede experimentar *cold start* y no debe tratarse como infraestructura productiva. El detalle de los controles observados se encuentra en [`RENDER_DEPLOYMENT_VALIDATION.md`](RENDER_DEPLOYMENT_VALIDATION.md).
 
 ## Arquitectura prevista
 
@@ -63,7 +80,7 @@ El seed es idempotente: administra 30 prestadores ficticios mediante `upsert`, c
 
 ## Creación controlada
 
-La creación queda reservada para una tarea autorizada posterior:
+Para crear o recrear una instancia de forma controlada:
 
 1. abrir el Dashboard de Render y elegir **New > Blueprint**;
 2. conectar el repositorio que ya contiene el cambio en `main`;
@@ -83,7 +100,7 @@ Copiar del Dashboard la URL real asignada al servicio; no registrar una direcci�
 - `/api/health` responde HTTP 200 con proceso y base disponibles;
 - `/` entrega el frontend;
 - `/api/openapi.json` entrega OpenAPI 3.0.4 como JSON;
-- `/api/docs` y `/api/docs/` entregan Swagger UI;
+- `/api/docs` redirige a `/api/docs/` y la ruta canónica entrega Swagger UI;
 - `/api/providers?page=1&pageSize=100` informa 30 registros;
 - los filtros informan 20 `ACTIVE` y 10 `INACTIVE`;
 - la paginación con tamaño 10 informa tres páginas;
@@ -147,15 +164,15 @@ La eliminación de la base y su expiración pueden hacer irrecuperables los dato
 
 La API queda públicamente accesible y no implementa autenticación ni autorización. Por ello esta preparación es apta solo para evaluación con datos ficticios; no debe exponerse a información real ni presentarse como producción.
 
-## Validación local y gate pendiente
+## Validación local y evidencia pública
 
-V2.1-01 realiza validación YAML y control estructural contra el esquema oficial. Si Render CLI no está instalada, no se la instala en esta fase. Antes de crear recursos, V2.1-04 debe ejecutar con Render CLI 2.7.0 o posterior:
+V2.1-01 realizó validación YAML y control estructural contra el esquema oficial. Ante futuras modificaciones del Blueprint, debe repetirse una validación con Render CLI 2.7.0 o posterior, o mediante el flujo oficial de creación:
 
 ```powershell
 render blueprints validate render.yaml
 ```
 
-La validación oficial no sustituye el smoke test del primer despliegue.
+La validación oficial no sustituye el smoke test. La instancia pública fue verificada y su evidencia está registrada en [`RENDER_DEPLOYMENT_VALIDATION.md`](RENDER_DEPLOYMENT_VALIDATION.md).
 
 ## Fuentes oficiales consultadas
 
