@@ -1,0 +1,13 @@
+flowchart LR
+  operator["Operador / evaluador"] -->|"Ejecuta y valida"| browser["Navegador web"]
+
+  subgraph workstation["Equipo local del evaluador"]
+    browser -->|"HTTP :3000"| system["Sistema de Gestión de Prestadores\nInterfaz web + API"]
+
+    subgraph compose["Límite Docker Compose"]
+      system -->|"Lectura y escritura"| data[("Persistencia PostgreSQL")]
+    end
+  end
+
+  system -->|"Listado, alta, edición,\nbaja lógica y reactivación"| browser
+

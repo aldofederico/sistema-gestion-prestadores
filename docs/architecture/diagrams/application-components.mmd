@@ -1,0 +1,60 @@
+flowchart LR
+  subgraph frontend["Frontend React"]
+    app["App / pantalla de prestadores"]
+    filters["Buscador + filtro por estado"]
+    results["Tabla desktop + tarjetas mobile"]
+    pagination["Paginación"]
+    form["Formulario alta / edición\nReact Hook Form + Zod"]
+    status["Confirmación baja lógica / reactivación"]
+    state["Estado local + debounce + feedback"]
+    apiClient["Cliente API · fetch /api/*"]
+    app --> filters
+    app --> results
+    app --> pagination
+    app --> form
+    app --> status
+    state --> app
+    filters --> apiClient
+    pagination --> apiClient
+    form --> apiClient
+    status --> apiClient
+  end
+
+  subgraph backend["Backend Express"]
+    static["Archivos estáticos + fallback SPA"]
+    routes["Rutas Providers"]
+    validate["Validación request · Zod"]
+    controllers["Controladores HTTP"]
+    service["Servicio Providers\nreglas + búsqueda + paginación"]
+    normalize["Normalización CUIT / teléfono"]
+    prismaClient["Acceso Prisma"]
+    errors["Middleware uniforme de errores"]
+    health["Health · proceso + PostgreSQL"]
+    openapi["OpenAPI JSON + Swagger UI"]
+    config["Configuración validada"]
+    routes --> validate --> controllers --> service
+    service --> normalize
+    normalize --> prismaClient
+    config -.-> routes
+    config -.-> prismaClient
+    routes -. errores .-> errors
+    validate -. errores .-> errors
+    service -. errores .-> errors
+  end
+
+  subgraph persistence["Persistencia"]
+    model["Provider\nUUID · CUIT único · ACTIVE/INACTIVE"]
+    migration["Migración versionada"]
+    seed["Seed idempotente\n30 prestadores ficticios"]
+    postgres[("PostgreSQL")]
+    migration --> postgres
+    seed --> postgres
+    model --> postgres
+  end
+
+  apiClient -->|"GET · POST · PUT · PATCH"| routes
+  static -->|"SPA"| app
+  prismaClient --> postgres
+  health --> postgres
+  openapi -. documenta .-> routes
+

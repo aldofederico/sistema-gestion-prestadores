@@ -1,0 +1,39 @@
+flowchart TB
+  subgraph build["BUILD · Dockerfile multietapa"]
+    source["Repositorio\nclient + server + prisma"] --> deps["npm ci"]
+    deps --> generate["Prisma Client"]
+    generate --> compile["Build React + Express"]
+    compile --> image["Imagen runtime\nNode.js 24"]
+  end
+
+  operator["Operador / evaluador"] -->|"docker compose up --build"| compose
+
+  subgraph compose["RUNTIME · Docker Compose"]
+    subgraph app["Servicio app · contenedor único · host 3000 → 3000"]
+      static["Frontend React compilado"]
+      express["Express\nAPI /api/* + estáticos"]
+      prisma["Prisma Client"]
+      startup["Inicio controlado\nmigrate deploy → seed → Express"]
+      healthapp["Health /api/health"]
+      static --> express
+      startup --> express
+      express --> prisma
+      healthapp --> prisma
+    end
+
+    subgraph db["Servicio db · red interna :5432"]
+      postgres[("PostgreSQL 18\nbase providers")]
+      healthdb["Health pg_isready"]
+      healthdb --> postgres
+    end
+
+    prisma -->|"DATABASE_URL · TCP 5432"| postgres
+    postgres --> volume[("Volumen nombrado\npostgres_data")]
+    healthdb -->|"service_healthy habilita app"| startup
+  end
+
+  image --> app
+  browser["Navegador\nhttp://localhost:3000"] -->|"HTTP"| express
+  envapp["Variables app\nDATABASE_URL · PORT · NODE_ENV"] -.-> app
+  envdb["Variables db\nPOSTGRES_USER · PASSWORD · DB"] -.-> db
+
