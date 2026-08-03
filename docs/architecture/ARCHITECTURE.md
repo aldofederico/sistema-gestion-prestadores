@@ -10,8 +10,20 @@ Express sirve tanto la interfaz como la API REST desde el mismo origen. Prisma
 accede a PostgreSQL. Docker Compose reproduce el entorno local con exactamente
 dos servicios, mientras Render aloja una instancia de demostración equivalente.
 
-- [Fuente Mermaid](diagrams/system-architecture.mmd)
-- [Diagrama SVG](diagrams/system-architecture.svg)
+## Catálogo de diagramas
+
+Cada vista se entrega como fuente Mermaid editable y como imagen SVG/PNG
+renderizada. El SVG es el formato principal por su legibilidad al ampliar; el
+PNG facilita la descarga y la visualización fuera de GitHub.
+
+| Vista | Propósito | Fuente | SVG | PNG |
+|---|---|---|---|---|
+| Contexto | Actores, límites y comunicaciones externas | [Mermaid](diagrams/system-context.mmd) | [SVG](diagrams/system-context.svg) | [PNG](diagrams/system-context.png) |
+| Contenedores y despliegue | Build, servicios Docker, variables, puertos, health y volumen | [Mermaid](diagrams/container-deployment.mmd) | [SVG](diagrams/container-deployment.svg) | [PNG](diagrams/container-deployment.png) |
+| Componentes de aplicación | Responsabilidades internas de frontend, backend y persistencia | [Mermaid](diagrams/application-components.mmd) | [SVG](diagrams/application-components.svg) | [PNG](diagrams/application-components.png) |
+| Vista integral | Recorrido resumido por la solución y sus ambientes | [Mermaid](diagrams/system-architecture.mmd) | [SVG](diagrams/system-architecture.svg) | [PNG](diagrams/system-architecture.png) |
+
+![Diagrama integral de arquitectura](diagrams/system-architecture.svg)
 
 ## Componentes y límites
 
@@ -27,6 +39,50 @@ dos servicios, mientras Render aloja una instancia de demostración equivalente.
 
 No hay servicios de dominio separados, bus de eventos, cache, almacenamiento de
 archivos ni procesos en segundo plano.
+
+### Inventario detallado de componentes
+
+| ID | Capa | Componente | Responsabilidad | Dependencias | Entrada | Salida | Carácter |
+|---|---|---|---|---|---|---|---|
+| FE-01 | Frontend | `App` | Orquestar pantalla, consulta, estado, diálogos y feedback | React, componentes FE | Interacción y respuestas API | UI actualizada | Obligatorio |
+| FE-02 | Frontend | Filtros | Capturar búsqueda por CUIT/razón social y estado | Material UI, debounce | Texto y estado | Parámetros de consulta | Obligatorio |
+| FE-03 | Frontend | Tabla/tarjetas | Presentar prestadores en desktop/mobile | Material UI | Lista paginada | Filas o tarjetas accionables | Obligatorio |
+| FE-04 | Frontend | Paginación | Navegar páginas estables de diez elementos | API de listado | Página elegida | Nueva consulta | Condicionado aprobado |
+| FE-05 | Frontend | Formulario | Alta/edición y validación inmediata | React Hook Form, Zod | Datos del prestador | Payload válido o error | Obligatorio |
+| FE-06 | Frontend | Diálogo de estado | Confirmar baja lógica o reactivación | React, Material UI | Prestador y acción | Cambio confirmado/cancelado | Obligatorio |
+| FE-07 | Frontend | Cliente API | Ejecutar `GET`, `POST`, `PUT` y `PATCH`; uniformar fallos de red/API | `fetch`, `AbortController` | Parámetros/payload | JSON o error tipado | Obligatorio |
+| BE-01 | Backend | Rutas Providers | Vincular métodos y paths con validación/controladores | Express | Request `/api/providers*` | Cadena middleware | Obligatorio |
+| BE-02 | Backend | Validación request | Validar query, params y body | Zod | Request HTTP | Datos validados o 400 | Obligatorio |
+| BE-03 | Backend | Controladores | Adaptar HTTP a casos de uso | Express, servicio | Datos validados | Response JSON | Obligatorio |
+| BE-04 | Backend | Servicio Providers | Aplicar reglas, búsqueda, paginación y mutaciones | Prisma, normalización | Comando/consulta | Provider o página | Obligatorio |
+| BE-05 | Backend | Normalización | Canonizar CUIT, teléfono, correo y opcionales | Funciones puras, Zod | Entrada aceptada | Valor persistible | Obligatorio |
+| BE-06 | Backend | Middleware de errores | Exponer contrato estable sin stack | Express, `AppError` | Excepción | 400/404/409/500 | Obligatorio |
+| BE-07 | Backend | Health | Verificar proceso y conectividad real | Prisma | `GET /api/health` | Estado proceso/base | Obligatorio |
+| BE-08 | Backend | Estáticos y SPA | Servir build React y fallback desde mismo origen | Express, `dist/client` | Request no API | HTML/asset | Obligatorio |
+| BE-09 | Backend | OpenAPI/Swagger | Publicar contrato HTTP existente | Swagger UI Express | `/api/docs`, JSON | Documentación interactiva | Extra implementado |
+| DA-01 | Persistencia | Prisma Client | Acceso tipado y transacción de listado | PostgreSQL | Operación del servicio | Registros/resultado | Obligatorio |
+| DA-02 | Persistencia | Modelo `Provider` | Definir entidad, tipos, unicidad e índices | Prisma Schema | Datos canónicos | Esquema relacional | Obligatorio |
+| DA-03 | Persistencia | Migración | Crear esquema reproducible | Prisma Migrate | Migración versionada | Base actualizada | Obligatorio |
+| DA-04 | Persistencia | Seed | Crear 30 datos ficticios sin duplicar ni borrar ajenos | Prisma | Dataset administrado | Baseline 20/10 | Obligatorio |
+| IN-01 | Infraestructura | Servicio `app` | Ejecutar frontend, API, Prisma e inicio controlado | Imagen Node | Puerto 3000, variables | Aplicación saludable | Obligatorio |
+| IN-02 | Infraestructura | Servicio `db` | Ejecutar PostgreSQL privado y health check | Imagen PostgreSQL | Variables y volumen | Base saludable | Obligatorio |
+| IN-03 | Infraestructura | Volumen `postgres_data` | Conservar datos entre reinicios | Docker | Escrituras PostgreSQL | Datos persistentes | Obligatorio |
+
+## Trazabilidad funcional
+
+| Requisito | UI | API | Servicio/regla | Persistencia | Evidencia de prueba |
+|---|---|---|---|---|---|
+| Listar prestadores | Tabla/tarjetas | `GET /api/providers` | Listado ordenado y paginado | `findMany` + índices | Integración API y pruebas de `App` |
+| Buscar por CUIT o razón social | Buscador con debounce | `GET` con `search` | CUIT sin formato o coincidencia parcial insensible a mayúsculas | Filtro Prisma | Integración de búsquedas y UI |
+| Filtrar por estado | Selector de estado | `GET` con `status` | Sólo `ACTIVE` o `INACTIVE` | Campo enum/indexado | Integración de filtro y UI |
+| Alta | Formulario | `POST /api/providers` | Valida, normaliza y fuerza `ACTIVE` | `create`; CUIT único | Backend y frontend: alta válida/errores |
+| CUIT obligatorio y único | Formulario + mensaje 409 | `POST`/`PUT` | Exactamente 11 dígitos canónicos | `@unique`, `VarChar(11)` | Vacío, formato y duplicado |
+| Razón social obligatoria | Formulario | `POST`/`PUT` | Zod rechaza vacío | `VarChar(160)` no nulo | Validaciones frontend/backend |
+| Email válido | Formulario | `POST`/`PUT` | Zod valida y normaliza | `VarChar(254)` no nulo | Email inválido y alta válida |
+| Modificar | Diálogo de edición | `PUT /api/providers/:id` | Actualiza editables; no cambia estado | `update` por UUID | Integración y UI de edición |
+| Baja lógica | Confirmación | `PATCH /api/providers/:id/status` | Cambia a `INACTIVE`; no existe `DELETE` | Registro conservado | Integración y UI de desactivación |
+| Reactivar | Confirmación | `PATCH /api/providers/:id/status` | Cambia a `ACTIVE` | Registro existente | Integración y UI de reactivación |
+| Paginar | Control de páginas | `GET` con `page/pageSize` | Máximo 100, orden estable | `skip/take` + conteo | Integración y UI de paginación |
 
 ## Flujos principales
 
@@ -55,6 +111,57 @@ El contenedor espera a PostgreSQL, aplica `prisma migrate deploy`, ejecuta el
 seed idempotente e inicia Express. Esta secuencia favorece la demo reproducible,
 pero acopla migración y seed al startup; es una limitación aceptada para este
 alcance, no un patrón recomendado para producción crítica.
+
+### Ciclo operativo completo
+
+1. **Build:** `npm ci`, generación de Prisma Client y compilación de React y
+   Express en etapas del Dockerfile.
+2. **Inicio:** Compose crea la red y el volumen; PostgreSQL inicia y supera
+   `pg_isready`.
+3. **Preparación:** `app` ejecuta `prisma migrate deploy` y el seed idempotente.
+4. **Runtime:** Express publica frontend y `/api/*`; Prisma usa `db:5432` dentro
+   de la red privada y el host accede sólo por `3000`.
+5. **Pruebas:** la suite completa usa `compose.test.yaml`, project name y base
+   lógica aislados; no reutiliza la base de desarrollo.
+6. **Reconstrucción limpia:** `docker compose down -v` elimina únicamente el
+   volumen de este proyecto; el siguiente `up --build` recrea esquema y seed.
+
+## Estructura lógica del repositorio
+
+```text
+client/                         SPA React y pruebas de interfaz
+server/src/                    API Express por módulos
+server/test/                   Integración, health y OpenAPI
+prisma/                        Schema, migraciones y seed
+scripts/                       Arranque y orquestación reproducible
+docs/                          Producto, arquitectura, proceso, QA y deploy
+Dockerfile                     Build multietapa y runtime
+compose.yaml                   Servicios app + db
+compose.test.yaml              PostgreSQL aislado para integración
+.env.example                   Contrato de configuración local
+render.yaml                    Demo pública temporal
+README.md                      Puerta de entrada para el evaluador
+```
+
+## Validación crítica de la arquitectura
+
+| Control | Resultado | Observación |
+|---|---|---|
+| Componentes faltantes | `NONE` para el challenge | Todos los obligatorios tienen UI, API, regla, persistencia y prueba |
+| Responsabilidades ambiguas | `NONE` material | Frontend valida UX; backend conserva autoridad; Prisma concentra acceso |
+| Dependencias innecesarias | `NONE` material | No hay Redux, router complejo, microservicios, mensajería ni cache |
+| Contradicciones Docker | `NONE` | Compose tiene exactamente `app` y `db`; 5432 no se publica al host |
+| Riesgo de inicio | `MEDIUM`, aceptado | Migración y seed están acoplados al startup por proporcionalidad de demo |
+| Riesgo de exposición | `HIGH` fuera de demo | API sin autenticación: sólo datos ficticios y uso no productivo |
+| Riesgo de capacidad | `LOW` para evaluación | Bundle >500 KB y búsqueda parcial no fueron optimizados a gran escala |
+
+## Decisiones pendientes de orquestación
+
+`DECISIONES PENDIENTES DE ORQUESTACIÓN PARA ENTREGAR EL CHALLENGE: NINGUNA`
+
+Autenticación, autorización, backup productivo, observabilidad, CI/CD y
+escalado quedan deliberadamente fuera del alcance. Sólo requerirían decisión si
+la demo evolucionara hacia un producto con datos reales.
 
 ## API y datos
 
