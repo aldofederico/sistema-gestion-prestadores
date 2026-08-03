@@ -1,63 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="960" height="780" viewBox="0 0 960 780" role="img" aria-labelledby="title desc">
-  <title id="title">Arquitectura del Sistema de Gestión de Prestadores</title>
-  <desc id="desc">Flujo desde navegador a React, Express, módulos de API, Prisma y PostgreSQL, con entornos Docker Compose y Render.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">Vista integral de arquitectura del Sistema de Gestión de Prestadores</title>
+  <desc id="desc">Monolito modular full stack con navegador, una aplicación desplegable que integra React y Express, Prisma Client y PostgreSQL. La misma arquitectura se ejecuta localmente con Docker Compose y como demo en Render.</desc>
   <defs>
-    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
-      <path d="M0,0 L0,6 L9,3 z" fill="#334155"/>
-    </marker>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%"><feGaussianBlur in="SourceAlpha" stdDeviation="6" result="blur"/><feOffset in="blur" dy="4" result="offset"/><feFlood flood-color="#0f172a" flood-opacity=".10" result="color"/><feComposite in="color" in2="offset" operator="in" result="shade"/><feMerge><feMergeNode in="shade"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0 0L0 6L9 3z" fill="#334155"/></marker>
     <style>
-      .box{fill:#f8fafc;stroke:#334155;stroke-width:2;rx:12}.primary{fill:#e0f2fe;stroke:#0369a1}.data{fill:#ecfdf5;stroke:#047857}.env{fill:#fff7ed;stroke:#c2410c}.label{font:600 17px system-ui,sans-serif;fill:#0f172a;text-anchor:middle}.small{font:14px system-ui,sans-serif;fill:#475569;text-anchor:middle}.line{stroke:#334155;stroke-width:2;fill:none;marker-end:url(#arrow)}.dash{stroke:#c2410c;stroke-width:2;stroke-dasharray:7 6;fill:none;marker-end:url(#arrow)}
+      .title{font:700 36px Inter,Segoe UI,system-ui,sans-serif;fill:#0f172a}.subtitle{font:18px Inter,Segoe UI,system-ui,sans-serif;fill:#64748b}.eyebrow{font:700 13px Inter,Segoe UI,system-ui,sans-serif;letter-spacing:1.4px;fill:#2563eb}.tag{font:700 14px Inter,Segoe UI,system-ui,sans-serif;letter-spacing:.8px;fill:#475569}.h{font:700 22px Inter,Segoe UI,system-ui,sans-serif;fill:#0f172a;text-anchor:middle}.body{font:16px Inter,Segoe UI,system-ui,sans-serif;fill:#475569;text-anchor:middle}.small{font:14px Inter,Segoe UI,system-ui,sans-serif;fill:#64748b;text-anchor:middle}.label{font:700 13px Inter,Segoe UI,system-ui,sans-serif;fill:#334155;text-anchor:middle}.card{fill:#fff;stroke:#cbd5e1;stroke-width:1.5}.appboundary{fill:#f8fafc;stroke:#2563eb;stroke-width:3}.ui{fill:#eff6ff;stroke:#3b82f6;stroke-width:2}.api{fill:#ecfeff;stroke:#0891b2;stroke-width:2}.module{fill:#fff;stroke:#94a3b8;stroke-width:1.5}.data{fill:#ecfdf5;stroke:#059669;stroke-width:2.5}.environment{fill:#fff7ed;stroke:#f97316;stroke-width:2}.line{stroke:#334155;stroke-width:2.5;fill:none;marker-end:url(#arrow)}.dash{stroke:#ea580c;stroke-width:2;stroke-dasharray:7 6;fill:none;marker-end:url(#arrow)}
     </style>
   </defs>
-  <rect width="960" height="780" fill="#ffffff"/>
-  <text x="480" y="38" class="label" font-size="24">Monolito modular full stack</text>
+  <rect width="1600" height="900" fill="#fff"/><rect width="14" height="900" fill="#2563eb"/>
+  <text x="70" y="48" class="eyebrow">ARQUITECTURA · VISTA INTEGRAL</text>
+  <text x="70" y="91" class="title">Monolito modular full stack</text>
+  <text x="70" y="123" class="subtitle">Una aplicación desplegable · una base de datos · un único origen HTTP</text>
+  <rect x="1360" y="47" width="170" height="42" rx="21" fill="#eff6ff" stroke="#bfdbfe"/><text x="1445" y="74" class="tag" text-anchor="middle" fill="#1d4ed8">AS-BUILT</text>
 
-  <rect class="box" x="350" y="68" width="260" height="64"/>
-  <text class="label" x="480" y="96">Evaluador / navegador</text>
-  <text class="small" x="480" y="118">Desktop o mobile</text>
+  <rect x="60" y="260" width="250" height="160" rx="20" class="card" filter="url(#shadow)"/>
+  <rect x="112" y="289" width="95" height="58" rx="7" fill="#f1f5f9" stroke="#334155" stroke-width="2"/><path d="M112 307h95" stroke="#334155" stroke-width="2"/>
+  <text x="185" y="378" class="h">Evaluador</text><text x="185" y="405" class="small">navegador desktop o mobile</text>
 
-  <rect class="box primary" x="330" y="170" width="300" height="76"/>
-  <text class="label" x="480" y="202">SPA React + Material UI</text>
-  <text class="small" x="480" y="226">Formularios, filtros y presentación</text>
+  <rect x="390" y="180" width="760" height="500" rx="26" class="appboundary" filter="url(#shadow)"/>
+  <rect x="425" y="205" width="155" height="30" rx="15" fill="#dbeafe"/><text x="503" y="226" class="label" fill="#1d4ed8">SERVICIO APP</text>
+  <text x="1110" y="226" class="tag" style="text-anchor:end">REACT + EXPRESS + PRISMA · CONTENEDOR ÚNICO</text>
 
-  <rect class="box primary" x="330" y="292" width="300" height="76"/>
-  <text class="label" x="480" y="324">Express · mismo origen</text>
-  <text class="small" x="480" y="348">API /api/* + frontend compilado</text>
+  <rect x="440" y="270" width="660" height="105" rx="17" class="ui"/>
+  <text x="770" y="310" class="h">SPA React + Material UI</text><text x="770" y="341" class="body">Listado · búsqueda · filtros · formularios · presentación responsive</text>
+  <rect x="440" y="420" width="660" height="140" rx="17" class="api"/>
+  <text x="770" y="457" class="h">Express · mismo origen</text><text x="770" y="486" class="body">/api/* · frontend compilado · fallback SPA</text>
+  <rect x="480" y="510" width="275" height="72" rx="13" class="module"/><text x="618" y="539" class="h" font-size="19">Módulo Providers</text><text x="618" y="565" class="small">Zod · controladores · servicios</text>
+  <rect x="785" y="510" width="275" height="72" rx="13" class="module"/><text x="922" y="539" class="h" font-size="19">Health + contrato</text><text x="922" y="565" class="small">OpenAPI JSON · Swagger UI</text>
+  <rect x="540" y="602" width="460" height="66" rx="14" class="data"/><text x="770" y="629" class="h" font-size="18">Prisma Client</text><text x="770" y="653" class="small">acceso persistente tipado</text>
+  <path d="M770 375v45M770 560v42" class="line"/>
 
-  <rect class="box" x="135" y="420" width="290" height="82"/>
-  <text class="label" x="280" y="452">Módulo Providers</text>
-  <text class="small" x="280" y="476">Zod · controladores · servicios</text>
+  <rect x="1230" y="260" width="280" height="250" rx="24" class="data" filter="url(#shadow)"/>
+  <rect x="1282" y="289" width="176" height="30" rx="15" fill="#d1fae5"/><text x="1370" y="310" class="label" fill="#047857">PERSISTENCIA</text>
+  <ellipse cx="1370" cy="385" rx="105" ry="55" fill="#fff" stroke="#059669" stroke-width="2"/>
+  <text x="1370" y="380" class="h">PostgreSQL 18</text><text x="1370" y="411" class="small">Provider</text>
+  <text x="1370" y="465" class="body">migración + seed idempotente</text><text x="1370" y="489" class="small">30 registros ficticios</text>
 
-  <rect class="box" x="535" y="420" width="290" height="82"/>
-  <text class="label" x="680" y="452">Health + documentación</text>
-  <text class="small" x="680" y="476">OpenAPI JSON · Swagger UI</text>
+  <path d="M310 340h130" class="line"/><rect x="326" y="306" width="98" height="26" rx="13" fill="#fff"/><text x="375" y="325" class="label">HTTP / JSON</text>
+  <path d="M1000 635c140 0 120-250 230-250" class="line"/><rect x="1110" y="507" width="86" height="26" rx="13" fill="#fff"/><text x="1153" y="526" class="label">TCP 5432</text>
 
-  <rect class="box data" x="330" y="548" width="300" height="70"/>
-  <text class="label" x="480" y="578">Prisma Client</text>
-  <text class="small" x="480" y="601">Modelo y acceso persistente</text>
-
-  <ellipse class="data" cx="480" cy="698" rx="150" ry="52"/>
-  <text class="label" x="480" y="694">PostgreSQL</text>
-  <text class="small" x="480" y="718">Provider + migración + seed</text>
-
-  <rect class="box env" x="36" y="276" width="220" height="96"/>
-  <text class="label" x="146" y="310">Docker Compose</text>
-  <text class="small" x="146" y="334">app + db</text>
-  <text class="small" x="146" y="355">localhost:3000</text>
-
-  <rect class="box env" x="704" y="276" width="220" height="96"/>
-  <text class="label" x="814" y="310">Render demo</text>
-  <text class="small" x="814" y="334">Web Service + Postgres</text>
-  <text class="small" x="814" y="355">datos ficticios</text>
-
-  <path class="line" d="M480 132 L480 170"/>
-  <path class="line" d="M480 246 L480 292"/>
-  <path class="line" d="M420 368 L310 420"/>
-  <path class="line" d="M540 368 L650 420"/>
-  <path class="line" d="M310 502 L430 548"/>
-  <path class="line" d="M650 502 L530 548"/>
-  <path class="line" d="M480 618 L480 645"/>
-  <path class="dash" d="M256 324 L330 324"/>
-  <path class="dash" d="M704 324 L630 324"/>
+  <rect x="110" y="735" width="590" height="115" rx="20" class="environment"/>
+  <circle cx="160" cy="780" r="21" fill="#ffedd5"/><path d="M149 780h22M160 769v22" stroke="#ea580c" stroke-width="3"/>
+  <text x="405" y="775" class="h">Ejecución local · Docker Compose</text><text x="405" y="806" class="body">servicios app + db · localhost:3000 · volumen postgres_data</text><text x="405" y="831" class="small">entorno reproducible para el evaluador</text>
+  <rect x="900" y="735" width="590" height="115" rx="20" class="environment"/>
+  <circle cx="950" cy="780" r="21" fill="#ffedd5"/><path d="M940 787c2-14 18-20 26-8 10-5 19 7 11 15h-35c-7-1-8-6-2-7z" fill="none" stroke="#ea580c" stroke-width="2.5"/>
+  <text x="1195" y="775" class="h">Demo pública · Render</text><text x="1195" y="806" class="body">Web Service + PostgreSQL · misma arquitectura lógica</text><text x="1195" y="831" class="small">temporal · datos ficticios · no productiva</text>
+  <path d="M405 735c0-32 170-25 170-55" class="dash"/><path d="M1195 735c0-32-170-25-170-55" class="dash"/>
 </svg>

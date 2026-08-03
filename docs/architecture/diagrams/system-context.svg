@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" role="img" aria-labelledby="title desc">
+  <title id="title">Diagrama de contexto del Sistema de Gestión de Prestadores</title>
+  <desc id="desc">El evaluador utiliza un navegador para acceder por HTTP al sistema desplegado localmente con Docker Compose. La aplicación se comunica con una única base PostgreSQL interna.</desc>
+  <defs>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%"><feGaussianBlur in="SourceAlpha" stdDeviation="6" result="blur"/><feOffset in="blur" dy="4" result="offset"/><feFlood flood-color="#0f172a" flood-opacity=".10" result="color"/><feComposite in="color" in2="offset" operator="in" result="shade"/><feMerge><feMergeNode in="shade"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0 0L0 6L9 3z" fill="#334155"/></marker>
+    <style>
+      .title{font:700 36px Inter,Segoe UI,system-ui,sans-serif;fill:#0f172a}.subtitle{font:18px Inter,Segoe UI,system-ui,sans-serif;fill:#64748b}.eyebrow{font:700 13px Inter,Segoe UI,system-ui,sans-serif;letter-spacing:1.4px;fill:#2563eb}.tag{font:700 14px Inter,Segoe UI,system-ui,sans-serif;letter-spacing:.8px;fill:#475569}.h{font:700 23px Inter,Segoe UI,system-ui,sans-serif;fill:#0f172a;text-anchor:middle}.body{font:16px Inter,Segoe UI,system-ui,sans-serif;fill:#475569;text-anchor:middle}.small{font:14px Inter,Segoe UI,system-ui,sans-serif;fill:#64748b;text-anchor:middle}.label{font:700 14px Inter,Segoe UI,system-ui,sans-serif;fill:#334155;text-anchor:middle}.card{fill:#fff;stroke:#cbd5e1;stroke-width:1.5}.boundary{fill:#f8fafc;stroke:#94a3b8;stroke-width:2}.docker{fill:#fff;stroke:#64748b;stroke-width:2;stroke-dasharray:10 8}.system{fill:#eff6ff;stroke:#2563eb;stroke-width:3}.data{fill:#ecfdf5;stroke:#059669;stroke-width:2.5}.line{stroke:#334155;stroke-width:2.7;fill:none;marker-end:url(#arrow)}
+    </style>
+  </defs>
+  <rect width="1600" height="900" fill="#ffffff"/>
+  <rect x="0" y="0" width="14" height="900" fill="#2563eb"/>
+
+  <text x="70" y="48" class="eyebrow">ARQUITECTURA · VISTA AS-BUILT</text>
+  <text x="70" y="91" class="title">Contexto del sistema</text>
+  <text x="70" y="123" class="subtitle">Actores, límites y comunicaciones externas del challenge</text>
+  <rect x="1390" y="48" width="140" height="42" rx="21" fill="#eff6ff" stroke="#bfdbfe"/>
+  <circle cx="1418" cy="69" r="5" fill="#2563eb"/><text x="1468" y="75" class="tag" text-anchor="middle" fill="#1d4ed8">AS-BUILT</text>
+
+  <rect x="55" y="185" width="310" height="480" rx="24" fill="#f8fafc" stroke="#e2e8f0"/>
+  <text x="85" y="220" class="tag">ACTOR EXTERNO</text>
+  <rect x="85" y="250" width="250" height="150" rx="18" class="card" filter="url(#shadow)"/>
+  <circle cx="210" cy="291" r="21" fill="#f8fafc" stroke="#334155" stroke-width="3"/>
+  <path d="M166 351c5-42 83-42 88 0" fill="none" stroke="#334155" stroke-width="3"/>
+  <text x="210" y="367" class="h">Evaluador</text>
+  <text x="210" y="391" class="small">ejecuta y valida</text>
+
+  <path d="M210 400v55" class="line"/>
+  <text x="244" y="435" class="label">usa</text>
+
+  <rect x="85" y="470" width="250" height="155" rx="18" class="card" filter="url(#shadow)"/>
+  <rect x="145" y="501" width="130" height="70" rx="8" fill="#f1f5f9" stroke="#334155" stroke-width="2"/>
+  <path d="M145 521h130" stroke="#334155" stroke-width="2"/>
+  <circle cx="157" cy="511" r="3" fill="#94a3b8"/><circle cx="168" cy="511" r="3" fill="#94a3b8"/>
+  <text x="210" y="601" class="h">Navegador web</text>
+  <text x="210" y="620" class="small">desktop o mobile</text>
+
+  <rect x="430" y="175" width="1115" height="590" rx="26" class="boundary"/>
+  <text x="465" y="214" class="tag">EQUIPO LOCAL DEL EVALUADOR</text>
+  <rect x="485" y="245" width="1005" height="445" rx="22" class="docker"/>
+  <rect x="520" y="228" width="232" height="34" rx="17" fill="#fff"/>
+  <text x="636" y="251" class="tag" text-anchor="middle">DOCKER COMPOSE · 2 SERVICIOS</text>
+
+  <rect x="575" y="330" width="530" height="260" rx="22" class="system" filter="url(#shadow)"/>
+  <rect x="610" y="358" width="110" height="28" rx="14" fill="#dbeafe"/><text x="665" y="378" class="label" fill="#1d4ed8">SERVICIO APP</text>
+  <text x="840" y="430" class="h">Sistema de Gestión de Prestadores</text>
+  <text x="840" y="464" class="body">Interfaz React responsive + API REST Express</text>
+  <line x1="650" y1="490" x2="1030" y2="490" stroke="#bfdbfe" stroke-width="2"/>
+  <text x="840" y="525" class="small">Listado · búsqueda · filtros · paginación</text>
+  <text x="840" y="553" class="small">Alta · edición · baja lógica · reactivación</text>
+  <text x="840" y="579" class="small">Único punto de acceso: localhost:3000</text>
+
+  <rect x="1210" y="348" width="205" height="220" rx="26" class="data" filter="url(#shadow)"/>
+  <rect x="1252" y="374" width="120" height="28" rx="14" fill="#d1fae5"/><text x="1312" y="394" class="label" fill="#047857">SERVICIO DB</text>
+  <ellipse cx="1312" cy="460" rx="72" ry="38" fill="#fff" stroke="#059669" stroke-width="2"/>
+  <text x="1312" y="455" class="h" font-size="20">PostgreSQL</text>
+  <text x="1312" y="480" class="small">providers</text>
+  <text x="1312" y="530" class="small">acceso sólo interno</text>
+
+  <path d="M335 548H575" class="line"/>
+  <rect x="390" y="515" width="132" height="26" rx="13" fill="#fff"/><text x="456" y="534" class="label">HTTP :3000</text>
+  <path d="M1105 460H1210" class="line"/>
+  <rect x="1118" y="426" width="80" height="26" rx="13" fill="#fff"/><text x="1158" y="445" class="label">TCP 5432</text>
+
+  <rect x="55" y="715" width="1490" height="120" rx="18" fill="#f8fafc" stroke="#e2e8f0"/>
+  <rect x="80" y="741" width="42" height="42" rx="12" fill="#fff7ed" stroke="#fed7aa"/>
+  <path d="M101 751l13 24H88z" fill="#f59e0b"/><rect x="99.5" y="758" width="3" height="8" rx="1" fill="#fff"/><circle cx="101" cy="770" r="1.8" fill="#fff"/>
+  <text x="145" y="754" class="tag">LÍMITES DEL CONTEXTO</text>
+  <text x="145" y="785" class="subtitle">Sin autenticación, servicios externos, microservicios, mensajería ni aplicación móvil.</text>
+  <text x="145" y="812" class="subtitle">La demo pública en Render es temporal, usa datos ficticios y no modifica este límite funcional.</text>
+
+  <rect x="1260" y="792" width="250" height="2" fill="#e2e8f0"/>
+  <circle cx="1280" cy="793" r="6" fill="#2563eb"/><text x="1300" y="799" class="small" style="text-anchor:start">flujo HTTP</text>
+  <circle cx="1405" cy="793" r="6" fill="#059669"/><text x="1425" y="799" class="small" style="text-anchor:start">persistencia</text>
+</svg>

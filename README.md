@@ -1,5 +1,16 @@
 # Sistema de Gestión de Prestadores
 
+## Portal documental público
+
+La documentación también puede recorrerse mediante un portal visual, moderno y
+de acceso público:
+
+- Portal: <https://sistema-gestion-prestadores-docs.aldo-federico.chatgpt.site>
+
+El portal facilita una primera lectura del producto, la arquitectura, la calidad
+y el proceso. Este repositorio, su código y sus fuentes versionadas continúan
+siendo la referencia canónica del challenge.
+
 ## Objetivo funcional
 
 Aplicación web para administrar prestadores de salud mediante una interfaz
@@ -67,8 +78,12 @@ SPA desde el mismo origen. PostgreSQL no publica el puerto `5432` al host en la
 ejecución principal.
 
 Los módulos, flujos, ambientes, decisiones, riesgos y límites están descritos
-en la [arquitectura vigente](docs/architecture/ARCHITECTURE.md), junto con su
-[diagrama](docs/architecture/diagrams/system-architecture.svg).
+en la [arquitectura vigente](docs/architecture/ARCHITECTURE.md). El catálogo
+incluye diagramas independientes de [contexto](docs/architecture/diagrams/system-context.svg),
+[contenedores y despliegue](docs/architecture/diagrams/container-deployment.svg),
+[componentes](docs/architecture/diagrams/application-components.svg) y una
+[vista integral](docs/architecture/diagrams/system-architecture.svg), todos con
+fuente Mermaid y versiones SVG/PNG.
 
 ## Requisitos previos
 

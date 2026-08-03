@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1200" viewBox="0 0 1800 1200" role="img" aria-labelledby="title desc">
+  <title id="title">Componentes AS-BUILT del Sistema de Gestión de Prestadores</title>
+  <desc id="desc">Responsabilidades internas del frontend React, backend Express y persistencia PostgreSQL. El flujo principal recorre interfaz, cliente fetch, rutas y validación, controladores, servicio, Prisma y base de datos.</desc>
+  <defs>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%"><feGaussianBlur in="SourceAlpha" stdDeviation="6" result="blur"/><feOffset in="blur" dy="4" result="offset"/><feFlood flood-color="#0f172a" flood-opacity=".08" result="color"/><feComposite in="color" in2="offset" operator="in" result="shade"/><feMerge><feMergeNode in="shade"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0 0L0 6L9 3z" fill="#334155"/></marker>
+    <style>
+      .title{font:700 36px Inter,Segoe UI,system-ui,sans-serif;fill:#0f172a}.subtitle{font:18px Inter,Segoe UI,system-ui,sans-serif;fill:#64748b}.eyebrow{font:700 13px Inter,Segoe UI,system-ui,sans-serif;letter-spacing:1.4px;fill:#2563eb}.tag{font:700 14px Inter,Segoe UI,system-ui,sans-serif;letter-spacing:.8px;fill:#475569}.h{font:700 20px Inter,Segoe UI,system-ui,sans-serif;fill:#0f172a;text-anchor:middle}.body{font:15px Inter,Segoe UI,system-ui,sans-serif;fill:#475569;text-anchor:middle}.small{font:13.5px Inter,Segoe UI,system-ui,sans-serif;fill:#64748b;text-anchor:middle}.label{font:700 13px Inter,Segoe UI,system-ui,sans-serif;fill:#334155;text-anchor:middle}.lane{stroke-width:2}.frontlane{fill:#eff6ff;stroke:#60a5fa}.backlane{fill:#ecfdf5;stroke:#34d399}.datalane{fill:#f5f3ff;stroke:#a78bfa}.card{fill:#fff;stroke:#cbd5e1;stroke-width:1.5}.front{stroke:#3b82f6}.back{stroke:#10b981}.data{stroke:#8b5cf6}.support{fill:#f8fafc;stroke:#cbd5e1;stroke-width:1.5}.line{stroke:#334155;stroke-width:2.4;fill:none;marker-end:url(#arrow)}.dash{stroke:#64748b;stroke-width:1.8;stroke-dasharray:7 6;fill:none;marker-end:url(#arrow)}
+    </style>
+  </defs>
+  <rect width="1800" height="1200" fill="#fff"/><rect width="14" height="1200" fill="#2563eb"/>
+  <text x="70" y="48" class="eyebrow">ARQUITECTURA · RESPONSABILIDADES INTERNAS</text>
+  <text x="70" y="91" class="title">Componentes de aplicación</text>
+  <text x="70" y="123" class="subtitle">Frontend, backend y persistencia · vista AS-BUILT</text>
+  <rect x="1560" y="47" width="170" height="42" rx="21" fill="#eff6ff" stroke="#bfdbfe"/><text x="1645" y="74" class="tag" text-anchor="middle" fill="#1d4ed8">FLUJO PRINCIPAL</text>
+
+  <rect x="40" y="160" width="500" height="910" rx="24" class="lane frontlane"/>
+  <rect x="575" y="160" width="775" height="910" rx="24" class="lane backlane"/>
+  <rect x="1385" y="160" width="375" height="910" rx="24" class="lane datalane"/>
+  <text x="70" y="198" class="tag">FRONTEND · REACT + TYPESCRIPT</text>
+  <text x="605" y="198" class="tag">BACKEND · NODE.JS + EXPRESS + TYPESCRIPT</text>
+  <text x="1415" y="198" class="tag">PERSISTENCIA · POSTGRESQL</text>
+
+  <rect x="85" y="235" width="410" height="105" rx="16" class="card front" filter="url(#shadow)"/>
+  <circle cx="115" cy="265" r="17" fill="#dbeafe"/><text x="115" y="271" class="label" fill="#1d4ed8">1</text>
+  <text x="290" y="278" class="h">App · pantalla de prestadores</text><text x="290" y="307" class="body">Consulta, estado, diálogos y feedback responsive</text>
+
+  <rect x="85" y="390" width="190" height="105" rx="14" class="card front"/><text x="180" y="427" class="h">Buscar y filtrar</text><text x="180" y="456" class="small">CUIT · razón social · estado</text><text x="180" y="478" class="small">debounce 300 ms</text>
+  <rect x="305" y="390" width="190" height="105" rx="14" class="card front"/><text x="400" y="427" class="h">Resultados</text><text x="400" y="456" class="small">tabla desktop · cards mobile</text><text x="400" y="478" class="small">paginación de 10</text>
+  <rect x="85" y="530" width="190" height="115" rx="14" class="card front"/><text x="180" y="568" class="h">Alta y edición</text><text x="180" y="597" class="small">React Hook Form + Zod</text><text x="180" y="620" class="small">CUIT visual · teléfono</text>
+  <rect x="305" y="530" width="190" height="115" rx="14" class="card front"/><text x="400" y="568" class="h">Estado</text><text x="400" y="597" class="small">baja lógica · reactivación</text><text x="400" y="620" class="small">sin DELETE</text>
+  <path d="M290 340v30M180 370h220M180 370v20M400 370v20M180 495v35M400 495v35" fill="none" stroke="#60a5fa" stroke-width="2"/>
+
+  <rect x="85" y="715" width="410" height="105" rx="16" class="card front" filter="url(#shadow)"/>
+  <circle cx="115" cy="745" r="17" fill="#dbeafe"/><text x="115" y="751" class="label" fill="#1d4ed8">2</text>
+  <text x="290" y="760" class="h">Cliente API · fetch nativo</text><text x="290" y="789" class="body">GET · POST · PUT · PATCH · AbortController</text>
+  <path d="M290 645v70" class="line"/>
+  <rect x="85" y="875" width="410" height="110" rx="16" class="support"/><text x="290" y="912" class="h">Estados observables</text><text x="290" y="942" class="small">carga · vacío · error · éxito · foco</text><text x="290" y="965" class="small">mensajes uniformes desde la API</text>
+
+  <rect x="620" y="235" width="390" height="105" rx="16" class="card back" filter="url(#shadow)"/>
+  <circle cx="650" cy="265" r="17" fill="#d1fae5"/><text x="650" y="271" class="label" fill="#047857">3</text>
+  <text x="815" y="278" class="h">Rutas + validación request</text><text x="815" y="307" class="body">/api/providers · query · params · body con Zod</text>
+  <rect x="620" y="390" width="390" height="100" rx="16" class="card back" filter="url(#shadow)"/>
+  <circle cx="650" cy="420" r="17" fill="#d1fae5"/><text x="650" y="426" class="label" fill="#047857">4</text>
+  <text x="815" y="432" class="h">Controladores HTTP</text><text x="815" y="461" class="body">request validado → respuesta pública</text>
+  <rect x="620" y="545" width="390" height="135" rx="16" class="card back" filter="url(#shadow)"/>
+  <circle cx="650" cy="575" r="17" fill="#d1fae5"/><text x="650" y="581" class="label" fill="#047857">5</text>
+  <text x="815" y="588" class="h">Servicio Providers</text><text x="815" y="618" class="body">listar · buscar · filtrar · paginar · crear</text><text x="815" y="644" class="body">actualizar · cambiar estado · normalizar</text><text x="815" y="668" class="small">traducción de errores Prisma</text>
+  <rect x="620" y="735" width="390" height="105" rx="16" class="card back" filter="url(#shadow)"/>
+  <circle cx="650" cy="765" r="17" fill="#d1fae5"/><text x="650" y="771" class="label" fill="#047857">6</text>
+  <text x="815" y="778" class="h">Prisma Client</text><text x="815" y="807" class="body">CRUD + transacción del listado</text>
+  <path d="M815 340v50M815 490v55M815 680v55" class="line"/>
+
+  <rect x="1050" y="235" width="255" height="100" rx="14" class="support"/><text x="1178" y="271" class="h">Estáticos + SPA</text><text x="1178" y="300" class="small">Express sirve el build React</text>
+  <rect x="1050" y="375" width="255" height="100" rx="14" class="support"/><text x="1178" y="411" class="h">OpenAPI + Swagger</text><text x="1178" y="440" class="small">contrato runtime documentado</text>
+  <rect x="1050" y="515" width="255" height="100" rx="14" class="support"/><text x="1178" y="551" class="h">Errores uniformes</text><text x="1178" y="580" class="small">400 · 404 · 409 · 500</text>
+  <rect x="1050" y="655" width="255" height="100" rx="14" class="support"/><text x="1178" y="691" class="h">Health check</text><text x="1178" y="720" class="small">proceso + SELECT 1</text>
+  <rect x="1050" y="925" width="255" height="85" rx="14" fill="#fff7ed" stroke="#f97316" stroke-width="1.5"/><text x="1178" y="958" class="h">Configuración</text><text x="1178" y="987" class="small">DATABASE_URL · PORT · NODE_ENV</text>
+  <path d="M1050 285h-40M1050 425h-40M1050 565h-40M1050 705h-40M1050 967h-40" class="dash"/>
+
+  <rect x="1425" y="235" width="295" height="220" rx="16" class="card data" filter="url(#shadow)"/>
+  <text x="1572" y="277" class="h">Modelo Provider</text><text x="1572" y="311" class="body">UUID · CUIT único · razón social</text><text x="1572" y="340" class="body">provincia · localidad · contacto</text><text x="1572" y="369" class="body">ACTIVE / INACTIVE · timestamps</text><line x1="1470" y1="391" x2="1674" y2="391" stroke="#ddd6fe"/><text x="1572" y="421" class="small">baja lógica · sin eliminación física</text>
+  <rect x="1425" y="505" width="295" height="105" rx="16" class="card data"/><text x="1572" y="543" class="h">Migración versionada</text><text x="1572" y="576" class="body">prisma migrate deploy</text>
+  <rect x="1425" y="655" width="295" height="115" rx="16" class="card data"/><text x="1572" y="693" class="h">Seed idempotente</text><text x="1572" y="724" class="body">30 prestadores ficticios</text><text x="1572" y="750" class="small">20 activos · 10 inactivos</text>
+  <ellipse cx="1572" cy="900" rx="150" ry="85" fill="#fff" stroke="#8b5cf6" stroke-width="2.5" filter="url(#shadow)"/>
+  <circle cx="1452" cy="858" r="17" fill="#ede9fe"/><text x="1452" y="864" class="label" fill="#6d28d9">7</text>
+  <text x="1572" y="891" class="h">PostgreSQL 18</text><text x="1572" y="922" class="body">persistencia relacional</text><text x="1572" y="948" class="small">volumen postgres_data</text>
+  <path d="M1572 455v50M1572 610v45M1572 770v45" class="dash"/>
+
+  <path d="M495 767H620" class="line"/><rect x="515" y="731" width="85" height="26" rx="13" fill="#fff"/><text x="558" y="750" class="label">HTTP / JSON</text>
+  <path d="M1010 787c170 0 230 113 412 113" class="line"/><rect x="1195" y="829" width="82" height="26" rx="13" fill="#fff"/><text x="1236" y="848" class="label">consultas</text>
+  <path d="M1305 705c55 0 65 165 117 180" class="dash"/><text x="1360" y="789" class="label">SELECT 1</text>
+
+  <rect x="40" y="1100" width="1720" height="65" rx="16" fill="#0f172a"/>
+  <text x="75" y="1126" font="700 13px Inter,Segoe UI,system-ui,sans-serif" letter-spacing="1px" fill="#93c5fd">RECORRIDO PRINCIPAL</text>
+  <text x="75" y="1151" font="16px Inter,Segoe UI,system-ui,sans-serif" fill="#e2e8f0">Interacción → validación UX → fetch → rutas/Zod → controlador → servicio/normalización → Prisma → PostgreSQL → JSON → actualización de UI</text>
+</svg>

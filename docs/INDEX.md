@@ -36,6 +36,16 @@ su propósito, operación y evidencia sin duplicarlos.
 | [CR-V2-001](v2/CR-V2-001.md) | Alcance, exclusiones y resultado del cambio V2 | `HISTÓRICO` |
 | [Plan V2](v2/IMPLEMENTATION_PLAN_V2.md) | Plan previo de implementación | `HISTÓRICO` |
 
+## Diagramas
+
+| Vista | Formatos | Clase |
+|---|---|---|
+| [Contexto](architecture/diagrams/system-context.svg) | [Mermaid](architecture/diagrams/system-context.mmd) · [SVG](architecture/diagrams/system-context.svg) · [PNG](architecture/diagrams/system-context.png) | `VIGENTE` |
+| [Contenedores y despliegue](architecture/diagrams/container-deployment.svg) | [Mermaid](architecture/diagrams/container-deployment.mmd) · [SVG](architecture/diagrams/container-deployment.svg) · [PNG](architecture/diagrams/container-deployment.png) | `VIGENTE` |
+| [Componentes de aplicación](architecture/diagrams/application-components.svg) | [Mermaid](architecture/diagrams/application-components.mmd) · [SVG](architecture/diagrams/application-components.svg) · [PNG](architecture/diagrams/application-components.png) | `VIGENTE` |
+| [Arquitectura integral](architecture/diagrams/system-architecture.svg) | [Mermaid](architecture/diagrams/system-architecture.mmd) · [SVG](architecture/diagrams/system-architecture.svg) · [PNG](architecture/diagrams/system-architecture.png) | `VIGENTE` |
+| [Proceso de desarrollo y entrega](process/diagrams/development-delivery-process.svg) | [Mermaid](process/diagrams/development-delivery-process.mmd) · [SVG](process/diagrams/development-delivery-process.svg) · [PNG](process/diagrams/development-delivery-process.png) | `VIGENTE` |
+
 ## Calidad y evidencia histórica
 
 | Documento | Propósito | Clase |

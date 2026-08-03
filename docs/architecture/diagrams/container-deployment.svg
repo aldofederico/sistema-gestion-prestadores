@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" role="img" aria-labelledby="title desc">
+  <title id="title">Contenedores y despliegue con Docker Compose</title>
+  <desc id="desc">Build multietapa y runtime local con exactamente dos servicios, app y db. Express sirve frontend y API desde el mismo origen; PostgreSQL permanece en la red interna y utiliza un volumen nombrado.</desc>
+  <defs>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%"><feGaussianBlur in="SourceAlpha" stdDeviation="6" result="blur"/><feOffset in="blur" dy="4" result="offset"/><feFlood flood-color="#0f172a" flood-opacity=".09" result="color"/><feComposite in="color" in2="offset" operator="in" result="shade"/><feMerge><feMergeNode in="shade"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0 0L0 6L9 3z" fill="#334155"/></marker>
+    <style>
+      .title{font:700 36px Inter,Segoe UI,system-ui,sans-serif;fill:#0f172a}.subtitle{font:18px Inter,Segoe UI,system-ui,sans-serif;fill:#64748b}.eyebrow{font:700 13px Inter,Segoe UI,system-ui,sans-serif;letter-spacing:1.4px;fill:#2563eb}.tag{font:700 14px Inter,Segoe UI,system-ui,sans-serif;letter-spacing:.8px;fill:#475569}.h{font:700 21px Inter,Segoe UI,system-ui,sans-serif;fill:#0f172a;text-anchor:middle}.body{font:16px Inter,Segoe UI,system-ui,sans-serif;fill:#475569;text-anchor:middle}.small{font:14px Inter,Segoe UI,system-ui,sans-serif;fill:#64748b;text-anchor:middle}.label{font:700 13px Inter,Segoe UI,system-ui,sans-serif;fill:#334155;text-anchor:middle}.lane{fill:#f8fafc;stroke:#e2e8f0;stroke-width:1.5}.card{fill:#fff;stroke:#cbd5e1;stroke-width:1.5}.build{fill:#fff7ed;stroke:#f97316;stroke-width:2}.app{fill:#eff6ff;stroke:#2563eb;stroke-width:3}.db{fill:#ecfdf5;stroke:#059669;stroke-width:3}.env{fill:#f5f3ff;stroke:#8b5cf6;stroke-width:1.5}.line{stroke:#334155;stroke-width:2.5;fill:none;marker-end:url(#arrow)}.dash{stroke:#64748b;stroke-width:2;stroke-dasharray:7 6;fill:none;marker-end:url(#arrow)}
+    </style>
+  </defs>
+  <rect width="1600" height="1000" fill="#fff"/><rect width="14" height="1000" fill="#2563eb"/>
+  <text x="70" y="48" class="eyebrow">ARQUITECTURA · BUILD Y RUNTIME</text>
+  <text x="70" y="91" class="title">Contenedores y despliegue</text>
+  <text x="70" y="123" class="subtitle">Dockerfile multietapa · exactamente dos servicios: app + db</text>
+  <rect x="1360" y="47" width="170" height="42" rx="21" fill="#fff7ed" stroke="#fed7aa"/><text x="1445" y="74" class="tag" text-anchor="middle" fill="#c2410c">DOCKER COMPOSE</text>
+
+  <rect x="55" y="165" width="1490" height="250" rx="24" class="lane"/>
+  <text x="85" y="202" class="tag">01 · BUILD · DOCKERFILE MULTIETAPA</text>
+  <g filter="url(#shadow)">
+    <rect x="95" y="245" width="260" height="110" rx="16" class="build"/><rect x="415" y="245" width="260" height="110" rx="16" class="build"/><rect x="735" y="245" width="260" height="110" rx="16" class="build"/><rect x="1055" y="245" width="400" height="110" rx="16" class="build"/>
+  </g>
+  <circle cx="125" cy="272" r="16" fill="#ffedd5"/><text x="125" y="278" class="label" fill="#c2410c">1</text><text x="225" y="292" class="h">Código fuente</text><text x="225" y="325" class="small">client · server · prisma</text>
+  <circle cx="445" cy="272" r="16" fill="#ffedd5"/><text x="445" y="278" class="label" fill="#c2410c">2</text><text x="545" y="292" class="h">Dependencias</text><text x="545" y="325" class="small">npm ci</text>
+  <circle cx="765" cy="272" r="16" fill="#ffedd5"/><text x="765" y="278" class="label" fill="#c2410c">3</text><text x="865" y="292" class="h">Generar y compilar</text><text x="865" y="322" class="small">Prisma Client · React · Express</text><text x="865" y="343" class="small">npm run db:generate · npm run build</text>
+  <circle cx="1085" cy="272" r="16" fill="#ffedd5"/><text x="1085" y="278" class="label" fill="#c2410c">4</text><text x="1255" y="292" class="h">Imagen runtime</text><text x="1255" y="322" class="small">Node.js 24 · artefactos compilados</text><text x="1255" y="343" class="small">sin devDependencies</text>
+  <path d="M355 300h60M675 300h60M995 300h60" class="line"/>
+
+  <rect x="55" y="450" width="1490" height="420" rx="24" class="lane"/>
+  <text x="85" y="487" class="tag">02 · RUNTIME · EQUIPO LOCAL</text>
+
+  <rect x="90" y="535" width="240" height="120" rx="18" class="card" filter="url(#shadow)"/>
+  <rect x="136" y="562" width="82" height="48" rx="6" fill="#f1f5f9" stroke="#334155" stroke-width="2"/><path d="M136 577h82" stroke="#334155" stroke-width="2"/>
+  <text x="240" y="575" class="h">Navegador</text><text x="240" y="604" class="small">localhost:3000</text><text x="210" y="638" class="small">único puerto publicado</text>
+
+  <rect x="395" y="515" width="670" height="300" rx="22" class="app" filter="url(#shadow)"/>
+  <rect x="430" y="541" width="118" height="28" rx="14" fill="#dbeafe"/><text x="489" y="561" class="label" fill="#1d4ed8">SERVICIO APP</text>
+  <text x="785" y="565" class="h">Contenedor único · host 3000 → 3000</text>
+  <rect x="435" y="600" width="180" height="85" rx="13" class="card"/><text x="525" y="635" class="h">React</text><text x="525" y="663" class="small">frontend compilado</text>
+  <rect x="650" y="600" width="180" height="85" rx="13" class="card"/><text x="740" y="635" class="h">Express</text><text x="740" y="663" class="small">API + SPA</text>
+  <rect x="865" y="600" width="160" height="85" rx="13" class="card"/><text x="945" y="635" class="h">Prisma</text><text x="945" y="663" class="small">acceso tipado</text>
+  <path d="M615 642h35M830 642h35" class="line"/>
+  <rect x="435" y="720" width="320" height="60" rx="12" class="env"/><text x="595" y="747" class="h" font-size="18">Inicio controlado</text><text x="595" y="770" class="small">migrate deploy → seed → Express</text>
+  <rect x="780" y="720" width="245" height="60" rx="12" class="card"/><text x="902" y="747" class="h" font-size="18">Health</text><text x="902" y="770" class="small">/api/health + PostgreSQL</text>
+
+  <rect x="1140" y="515" width="350" height="220" rx="22" class="db" filter="url(#shadow)"/>
+  <rect x="1175" y="541" width="105" height="28" rx="14" fill="#d1fae5"/><text x="1228" y="561" class="label" fill="#047857">SERVICIO DB</text>
+  <text x="1315" y="601" class="h">PostgreSQL 18</text><text x="1315" y="632" class="body">base providers · TCP interno 5432</text>
+  <rect x="1180" y="665" width="270" height="42" rx="10" class="card"/><text x="1315" y="691" class="small">Health: pg_isready</text>
+  <rect x="1190" y="770" width="250" height="74" rx="34" fill="#fff" stroke="#059669" stroke-width="2"/><text x="1315" y="800" class="h" font-size="19">Volumen nombrado</text><text x="1315" y="826" class="small">postgres_data</text>
+
+  <path d="M330 595h65" class="line"/><text x="362" y="580" class="label">HTTP</text>
+  <path d="M1065 642h75" class="line"/><text x="1102" y="627" class="label">TCP 5432</text>
+  <path d="M1315 735v35" class="line"/>
+  <path d="M1140 690c-40 0-40 60-115 60" class="dash"/><text x="1090" y="722" class="label">db healthy</text>
+  <path d="M1255 355v55c0 24-525 20-525 105" class="dash"/><text x="1035" y="438" class="label">ejecuta la imagen</text>
+
+  <rect x="55" y="900" width="1490" height="60" rx="16" fill="#0f172a"/>
+  <text x="90" y="937" font-family="ui-monospace,SFMono-Regular,Consolas,monospace" font-size="17" fill="#f8fafc">docker compose up --build</text>
+  <circle cx="430" cy="930" r="5" fill="#38bdf8"/><text x="447" y="937" class="small" style="text-anchor:start" fill="#cbd5e1">app espera db healthy</text>
+  <circle cx="720" cy="930" r="5" fill="#34d399"/><text x="737" y="937" class="small" style="text-anchor:start" fill="#cbd5e1">5432 no se publica al host</text>
+  <circle cx="1040" cy="930" r="5" fill="#a78bfa"/><text x="1057" y="937" class="small" style="text-anchor:start" fill="#cbd5e1">down conserva el volumen · down -v lo elimina</text>
+</svg>
