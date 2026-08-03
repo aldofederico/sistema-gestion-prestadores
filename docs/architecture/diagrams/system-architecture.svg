@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="780" viewBox="0 0 960 780" role="img" aria-labelledby="title desc">
+  <title id="title">Arquitectura del Sistema de Gestión de Prestadores</title>
+  <desc id="desc">Flujo desde navegador a React, Express, módulos de API, Prisma y PostgreSQL, con entornos Docker Compose y Render.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L0,6 L9,3 z" fill="#334155"/>
+    </marker>
+    <style>
+      .box{fill:#f8fafc;stroke:#334155;stroke-width:2;rx:12}.primary{fill:#e0f2fe;stroke:#0369a1}.data{fill:#ecfdf5;stroke:#047857}.env{fill:#fff7ed;stroke:#c2410c}.label{font:600 17px system-ui,sans-serif;fill:#0f172a;text-anchor:middle}.small{font:14px system-ui,sans-serif;fill:#475569;text-anchor:middle}.line{stroke:#334155;stroke-width:2;fill:none;marker-end:url(#arrow)}.dash{stroke:#c2410c;stroke-width:2;stroke-dasharray:7 6;fill:none;marker-end:url(#arrow)}
+    </style>
+  </defs>
+  <rect width="960" height="780" fill="#ffffff"/>
+  <text x="480" y="38" class="label" font-size="24">Monolito modular full stack</text>
+
+  <rect class="box" x="350" y="68" width="260" height="64"/>
+  <text class="label" x="480" y="96">Evaluador / navegador</text>
+  <text class="small" x="480" y="118">Desktop o mobile</text>
+
+  <rect class="box primary" x="330" y="170" width="300" height="76"/>
+  <text class="label" x="480" y="202">SPA React + Material UI</text>
+  <text class="small" x="480" y="226">Formularios, filtros y presentación</text>
+
+  <rect class="box primary" x="330" y="292" width="300" height="76"/>
+  <text class="label" x="480" y="324">Express · mismo origen</text>
+  <text class="small" x="480" y="348">API /api/* + frontend compilado</text>
+
+  <rect class="box" x="135" y="420" width="290" height="82"/>
+  <text class="label" x="280" y="452">Módulo Providers</text>
+  <text class="small" x="280" y="476">Zod · controladores · servicios</text>
+
+  <rect class="box" x="535" y="420" width="290" height="82"/>
+  <text class="label" x="680" y="452">Health + documentación</text>
+  <text class="small" x="680" y="476">OpenAPI JSON · Swagger UI</text>
+
+  <rect class="box data" x="330" y="548" width="300" height="70"/>
+  <text class="label" x="480" y="578">Prisma Client</text>
+  <text class="small" x="480" y="601">Modelo y acceso persistente</text>
+
+  <ellipse class="data" cx="480" cy="698" rx="150" ry="52"/>
+  <text class="label" x="480" y="694">PostgreSQL</text>
+  <text class="small" x="480" y="718">Provider + migración + seed</text>
+
+  <rect class="box env" x="36" y="276" width="220" height="96"/>
+  <text class="label" x="146" y="310">Docker Compose</text>
+  <text class="small" x="146" y="334">app + db</text>
+  <text class="small" x="146" y="355">localhost:3000</text>
+
+  <rect class="box env" x="704" y="276" width="220" height="96"/>
+  <text class="label" x="814" y="310">Render demo</text>
+  <text class="small" x="814" y="334">Web Service + Postgres</text>
+  <text class="small" x="814" y="355">datos ficticios</text>
+
+  <path class="line" d="M480 132 L480 170"/>
+  <path class="line" d="M480 246 L480 292"/>
+  <path class="line" d="M420 368 L310 420"/>
+  <path class="line" d="M540 368 L650 420"/>
+  <path class="line" d="M310 502 L430 548"/>
+  <path class="line" d="M650 502 L530 548"/>
+  <path class="line" d="M480 618 L480 645"/>
+  <path class="dash" d="M256 324 L330 324"/>
+  <path class="dash" d="M704 324 L630 324"/>
+</svg>

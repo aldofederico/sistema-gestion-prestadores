@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="1120" viewBox="0 0 1100 1120" role="img" aria-labelledby="title desc">
+  <title id="title">Proceso de desarrollo y entrega</title>
+  <desc id="desc">Ocho fases con gates G0 a G9, bucle de defectos y tratamiento de anomalías.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#334155"/></marker>
+    <style>
+      .phase{fill:#e0f2fe;stroke:#0369a1;stroke-width:2;rx:11}.gate{fill:#fef3c7;stroke:#b45309;stroke-width:2}.loop{fill:#fce7f3;stroke:#be185d;stroke-width:2;rx:11}.state{fill:#ecfdf5;stroke:#047857;stroke-width:2;rx:11}.blocked{fill:#fee2e2;stroke:#b91c1c;stroke-width:2;rx:11}.label{font:600 16px system-ui,sans-serif;fill:#0f172a;text-anchor:middle}.small{font:13px system-ui,sans-serif;fill:#475569;text-anchor:middle}.line{stroke:#334155;stroke-width:2;fill:none;marker-end:url(#arrow)}.fail{stroke:#be185d;stroke-width:2;fill:none;marker-end:url(#arrow)}.warn{stroke:#b91c1c;stroke-width:2;stroke-dasharray:7 5;fill:none;marker-end:url(#arrow)}
+    </style>
+  </defs>
+  <rect width="1100" height="1120" fill="#fff"/>
+  <text class="label" x="550" y="34" font-size="24">Proceso incremental con control humano y evidencia proporcional</text>
+
+  <rect class="phase" x="375" y="62" width="350" height="56"/><text class="label" x="550" y="96">F1 · Intake y perfil</text>
+  <polygon class="gate" points="550,144 690,190 550,236 410,190"/><text class="label" x="550" y="186">G0 · Integridad</text><text class="small" x="550" y="207">baseline · autoridad · perfil</text>
+  <rect class="phase" x="375" y="270" width="350" height="62"/><text class="label" x="550" y="298">F2 · Alcance y diseño</text><text class="small" x="550" y="319">G1 · aceptación y rollback</text>
+  <rect class="phase" x="375" y="366" width="350" height="56"/><text class="label" x="550" y="400">F3 · Preflight</text>
+  <rect class="phase" x="375" y="456" width="350" height="56"/><text class="label" x="550" y="490">F4 · Implementación incremental</text>
+  <rect class="phase" x="375" y="546" width="350" height="68"/><text class="label" x="550" y="574">F5 · Verificación automatizada</text><text class="small" x="550" y="597">G2 · G3 · G4 · G6 condicional</text>
+  <rect class="phase" x="375" y="648" width="350" height="62"/><text class="label" x="550" y="676">F6 · QA y aceptación</text><text class="small" x="550" y="697">G5 · conducta observable</text>
+  <rect class="phase" x="375" y="744" width="350" height="62"/><text class="label" x="550" y="772">F7 · Integración y deploy</text><text class="small" x="550" y="793">G7 · G8 si aplica</text>
+  <rect class="phase" x="375" y="840" width="350" height="62"/><text class="label" x="550" y="868">F8 · Cierre y aprendizaje</text><text class="small" x="550" y="889">G9 · fuentes, métricas y deuda</text>
+  <rect class="state" x="410" y="956" width="280" height="58"/><text class="label" x="550" y="990">CLOSED_VERIFIED</text>
+
+  <rect class="loop" x="790" y="566" width="260" height="104"/><text class="label" x="920" y="598">Defecto</text><text class="small" x="920" y="622">reproducir · clasificar · corregir</text><text class="small" x="920" y="644">prueba · regresión · revalidación</text>
+  <rect class="blocked" x="50" y="350" width="270" height="110"/><text class="label" x="185" y="382">Anomalía material</text><text class="small" x="185" y="407">contener · alternativas · decisión</text><text class="small" x="185" y="431">reanudar, escalar o cancelar</text>
+
+  <path class="line" d="M550 118 L550 144"/><path class="line" d="M550 236 L550 270"/><path class="line" d="M550 332 L550 366"/><path class="line" d="M550 422 L550 456"/><path class="line" d="M550 512 L550 546"/><path class="line" d="M550 614 L550 648"/><path class="line" d="M550 710 L550 744"/><path class="line" d="M550 806 L550 840"/><path class="line" d="M550 902 L550 956"/>
+  <path class="fail" d="M725 580 C760 580 760 610 790 610"/><path class="fail" d="M725 680 C765 680 760 640 790 640"/><path class="fail" d="M920 566 C920 520 760 520 725 568"/>
+  <path class="warn" d="M410 190 C250 190 185 260 185 350"/><path class="warn" d="M375 394 L320 394"/><path class="warn" d="M320 405 C340 405 350 394 375 394"/>
+  <text class="small" x="590" y="253">PASS</text><text class="small" x="756" y="565">FAIL</text><text class="small" x="760" y="700">FAIL</text><text class="small" x="306" y="184">BLOCKED</text>
+</svg>
