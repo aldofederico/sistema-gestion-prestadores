@@ -1,0 +1,12 @@
+flowchart TD
+  user["Evaluador / navegador"] --> spa["SPA React + Material UI"]
+  spa -->|"fetch /api/*"| api["Express: mismo origen"]
+  api --> providers["Módulo Providers\nZod + servicios"]
+  api --> health["Health + OpenAPI / Swagger"]
+  providers --> prisma["Prisma Client"]
+  health --> prisma
+  prisma --> db[("PostgreSQL")]
+  compose["Docker Compose\napp + db"] -. ejecuta .-> api
+  compose -. ejecuta .-> db
+  render["Render demo\nWeb Service + Postgres"] -. aloja .-> api
+  render -. aloja .-> db

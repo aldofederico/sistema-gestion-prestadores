@@ -40,6 +40,21 @@ gratuita para el 2026-08-30. La evidencia del smoke test público se encuentra e
 - Pruebas: Vitest, React Testing Library y Supertest.
 - Infraestructura local: Docker Compose.
 
+## Documentación
+
+| Tema | Fuente vigente |
+|---|---|
+| Navegación completa | [`docs/INDEX.md`](docs/INDEX.md) |
+| Arquitectura implementada | [`docs/architecture/ARCHITECTURE.md`](docs/architecture/ARCHITECTURE.md) |
+| Proceso de desarrollo y entrega | [`docs/process/DEVELOPMENT_PROCESS.md`](docs/process/DEVELOPMENT_PROCESS.md) |
+| Estrategia de calidad | [`docs/quality/QUALITY_STRATEGY.md`](docs/quality/QUALITY_STRATEGY.md) |
+| Aceptación manual | [`docs/ACCEPTANCE_CHECKLIST.md`](docs/ACCEPTANCE_CHECKLIST.md) |
+| Despliegue de demo | [`docs/deployment/RENDER_DEPLOYMENT.md`](docs/deployment/RENDER_DEPLOYMENT.md) |
+
+Los protocolos, informes, logs y retrospectivas son evidencia histórica. El
+[índice documental](docs/INDEX.md) distingue las fuentes vigentes de esas
+fotografías sin duplicar sus resultados.
+
 ## Arquitectura
 
 Docker Compose contiene exactamente dos servicios:
@@ -50,6 +65,10 @@ Docker Compose contiene exactamente dos servicios:
 Express sirve `/api/*`, los archivos compilados del frontend y el fallback de la
 SPA desde el mismo origen. PostgreSQL no publica el puerto `5432` al host en la
 ejecución principal.
+
+Los módulos, flujos, ambientes, decisiones, riesgos y límites están descritos
+en la [arquitectura vigente](docs/architecture/ARCHITECTURE.md), junto con su
+[diagrama](docs/architecture/diagrams/system-architecture.svg).
 
 ## Requisitos previos
 
@@ -217,6 +236,8 @@ compose.test.yaml   Exposición aislada de PostgreSQL para pruebas
 Dockerfile          Build multietapa y runtime de producción
 docs/testing/       Protocolos e informes de ejecución
 docs/process/       Logs y retrospectivas
+docs/architecture/  Arquitectura vigente y diagrama
+docs/quality/       Estrategia de calidad vigente
 docs/product/       Historias, habilitadores y trazabilidad
 docs/v2/            Cambio y plan V2
 docs/deployment/    Procedimiento de despliegue de demostración
@@ -307,7 +328,11 @@ El alcance no incluye autenticación, autorización, eliminación física,
 routing frontend, CI/CD ni infraestructura productiva. No existe endpoint
 `DELETE`. La demo cloud publicada es temporal y no productiva; Swagger es
 documentación de la API pública y no mitiga la ausencia deliberada de controles
-de acceso.
+de acceso. Tampoco se implementaron rate limiting, request ID, logging
+estructurado, observabilidad avanzada, backups productivos ni hardening
+integral. La [arquitectura](docs/architecture/ARCHITECTURE.md) y la
+[estrategia de calidad](docs/quality/QUALITY_STRATEGY.md) registran el riesgo y
+los gates requeridos antes de superar el alcance de demo.
 
 ## Fotografía histórica de V2
 

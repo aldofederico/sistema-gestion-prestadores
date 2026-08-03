@@ -1,0 +1,23 @@
+flowchart TD
+  intake["F1 Intake y perfil"] --> g0{"G0 integridad"}
+  g0 -->|PASS| scope["F2 Alcance, aceptación y diseño"]
+  g0 -->|BLOCKED| anomaly["Contener anomalía y decidir"]
+  scope --> g1{"G1 alcance"}
+  g1 -->|PASS| preflight["F3 Preflight"]
+  g1 -->|CAMBIO| scope
+  preflight --> implementation["F4 Implementación incremental"]
+  implementation --> verify["F5 Verificación · G2/G3/G4/G6"]
+  verify -->|PASS| qa["F6 QA y aceptación · G5"]
+  verify -->|FAIL| defect["Defecto: reproducir y clasificar"]
+  qa -->|PASS| integration["F7 Integración · G7"]
+  qa -->|FAIL| defect
+  defect --> fix["Corregir + prueba + regresión"]
+  fix --> verify
+  integration --> deploy{"¿Hay deploy?"}
+  deploy -->|Sí · G8| smoke["Deploy, smoke y rollback"]
+  deploy -->|No| close["F8 Cierre y aprendizaje · G9"]
+  smoke -->|PASS| close
+  smoke -->|FAIL| anomaly
+  anomaly -->|Reanudar| preflight
+  anomaly -->|Cancelar| cancelled["CANCELLED"]
+  close --> done["CLOSED_VERIFIED"]
