@@ -98,11 +98,37 @@ describe("OpenAPI y Swagger UI", () => {
   it("el alta no admite status", () => {
     expect(schemas.EditableProviderFields.properties).not.toHaveProperty("status");
     expect(schemas.CreateProviderRequest.description).toContain("No admite status");
+    expect(schemas.EditableProviderFields.properties.cuit).toMatchObject({
+      minLength: 1,
+      pattern: "^(?:\\D*\\d){11}\\D*$",
+      example: "20-99999999-1"
+    });
+    expect(schemas.EditableProviderFields.properties.phone).toMatchObject({
+      nullable: true,
+      pattern: "^(?:\\D*\\d){0,30}\\D*$",
+      example: "(011) 5555-0101"
+    });
+
+    const requestCuitPattern = new RegExp(
+      schemas.EditableProviderFields.properties.cuit.pattern
+    );
+    const requestPhonePattern = new RegExp(
+      schemas.EditableProviderFields.properties.phone.pattern
+    );
+
+    expect(requestCuitPattern.test("20-99999999-1")).toBe(true);
+    expect(requestCuitPattern.test("20999999991")).toBe(true);
+    expect(requestCuitPattern.test("20-9999999-1")).toBe(false);
+    expect(requestPhonePattern.test("(011) 5555-0101")).toBe(true);
+    expect(requestPhonePattern.test("sin teléfono")).toBe(true);
+    expect(requestPhonePattern.test("1".repeat(31))).toBe(false);
   });
 
   it("la modificación no admite status", () => {
     expect(schemas.EditableProviderFields.properties).not.toHaveProperty("status");
     expect(schemas.UpdateProviderRequest.description).toContain("No admite status");
+    expect(schemas.Provider.properties.cuit.pattern).toBe("^\\d{11}$");
+    expect(schemas.Provider.properties.phone.pattern).toBe("^\\d{1,30}$");
   });
 
   it("el cambio de estado requiere status", () => {

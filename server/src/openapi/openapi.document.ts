@@ -64,6 +64,26 @@ const editableProviderProperties = {
   }
 } as const;
 
+const editableProviderRequestProperties = {
+  ...editableProviderProperties,
+  cuit: {
+    type: "string",
+    minLength: 1,
+    pattern: "^(?:\\D*\\d){11}\\D*$",
+    description:
+      "CUIT con exactamente 11 dígitos significativos. Puede enviarse con separadores; la API elimina los caracteres no numéricos y persiste solo los dígitos.",
+    example: "20-99999999-1"
+  },
+  phone: {
+    type: "string",
+    nullable: true,
+    pattern: "^(?:\\D*\\d){0,30}\\D*$",
+    description:
+      "Teléfono opcional con hasta 30 dígitos significativos. Puede incluir formato; la API elimina caracteres no numéricos, conserva ceros iniciales y normaliza una entrada sin dígitos a null.",
+    example: "(011) 5555-0101"
+  }
+} as const;
+
 export const openApiDocument = {
   openapi: "3.0.4",
   info: {
@@ -328,7 +348,7 @@ export const openApiDocument = {
         type: "object",
         additionalProperties: false,
         required: ["cuit", "businessName", "email"],
-        properties: editableProviderProperties
+        properties: editableProviderRequestProperties
       },
       CreateProviderRequest: {
         allOf: [{ $ref: "#/components/schemas/EditableProviderFields" }],
