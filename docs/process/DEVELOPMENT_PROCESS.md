@@ -13,6 +13,9 @@ del impacto, los datos, la seguridad y la dificultad del rollback.
 
 - [Fuente Mermaid](diagrams/development-delivery-process.mmd)
 - [Diagrama SVG](diagrams/development-delivery-process.svg)
+- [Diagrama PNG](diagrams/development-delivery-process.png)
+
+![Proceso de desarrollo y entrega](diagrams/development-delivery-process.svg)
 
 ## Proceso observado y aprendizajes
 
