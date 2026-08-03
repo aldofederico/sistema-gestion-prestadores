@@ -1,32 +1,63 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="1120" viewBox="0 0 1100 1120" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" role="img" aria-labelledby="title desc">
   <title id="title">Proceso de desarrollo y entrega</title>
-  <desc id="desc">Ocho fases con gates G0 a G9, bucle de defectos y tratamiento de anomalías.</desc>
+  <desc id="desc">Proceso incremental de ocho fases con gates G0 a G9, avance controlado, tratamiento de defectos, anomalías materiales y cierre verificado.</desc>
   <defs>
-    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#334155"/></marker>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%"><feGaussianBlur in="SourceAlpha" stdDeviation="6" result="blur"/><feOffset in="blur" dy="4" result="offset"/><feFlood flood-color="#0f172a" flood-opacity=".08" result="color"/><feComposite in="color" in2="offset" operator="in" result="shade"/><feMerge><feMergeNode in="shade"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0 0L0 6L9 3z" fill="#334155"/></marker>
+    <marker id="arrowRed" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0 0L0 6L9 3z" fill="#be123c"/></marker>
     <style>
-      .phase{fill:#e0f2fe;stroke:#0369a1;stroke-width:2;rx:11}.gate{fill:#fef3c7;stroke:#b45309;stroke-width:2}.loop{fill:#fce7f3;stroke:#be185d;stroke-width:2;rx:11}.state{fill:#ecfdf5;stroke:#047857;stroke-width:2;rx:11}.blocked{fill:#fee2e2;stroke:#b91c1c;stroke-width:2;rx:11}.label{font:600 16px system-ui,sans-serif;fill:#0f172a;text-anchor:middle}.small{font:13px system-ui,sans-serif;fill:#475569;text-anchor:middle}.line{stroke:#334155;stroke-width:2;fill:none;marker-end:url(#arrow)}.fail{stroke:#be185d;stroke-width:2;fill:none;marker-end:url(#arrow)}.warn{stroke:#b91c1c;stroke-width:2;stroke-dasharray:7 5;fill:none;marker-end:url(#arrow)}
+      .title{font:700 36px Inter,Segoe UI,system-ui,sans-serif;fill:#0f172a}.subtitle{font:18px Inter,Segoe UI,system-ui,sans-serif;fill:#64748b}.eyebrow{font:700 13px Inter,Segoe UI,system-ui,sans-serif;letter-spacing:1.4px;fill:#2563eb}.tag{font:700 14px Inter,Segoe UI,system-ui,sans-serif;letter-spacing:.8px;fill:#475569}.h{font:700 20px Inter,Segoe UI,system-ui,sans-serif;fill:#0f172a;text-anchor:middle}.body{font:15px Inter,Segoe UI,system-ui,sans-serif;fill:#475569;text-anchor:middle}.small{font:13px Inter,Segoe UI,system-ui,sans-serif;fill:#64748b;text-anchor:middle}.label{font:700 13px Inter,Segoe UI,system-ui,sans-serif;fill:#334155;text-anchor:middle}.lane{fill:#f8fafc;stroke:#e2e8f0;stroke-width:1.5}.phase{fill:#fff;stroke:#3b82f6;stroke-width:2}.gate{fill:#fef3c7;stroke:#f59e0b;stroke-width:1.5}.state{fill:#ecfdf5;stroke:#059669;stroke-width:2.5}.warn{fill:#fff7ed;stroke:#f97316;stroke-width:2}.defect{fill:#fff1f2;stroke:#e11d48;stroke-width:2}.line{stroke:#334155;stroke-width:2.5;fill:none;marker-end:url(#arrow)}.fail{stroke:#be123c;stroke-width:2.2;stroke-dasharray:7 6;fill:none;marker-end:url(#arrowRed)}
     </style>
   </defs>
-  <rect width="1100" height="1120" fill="#fff"/>
-  <text class="label" x="550" y="34" font-size="24">Proceso incremental con control humano y evidencia proporcional</text>
+  <rect width="1600" height="1000" fill="#fff"/><rect width="14" height="1000" fill="#2563eb"/>
+  <text x="70" y="48" class="eyebrow">PROCESO · CONTROL HUMANO Y EVIDENCIA PROPORCIONAL</text>
+  <text x="70" y="91" class="title">Desarrollo y entrega incremental</text>
+  <text x="70" y="123" class="subtitle">Ocho fases · diez gates G0–G9 · corrección trazable · cierre verificado</text>
+  <rect x="1365" y="47" width="165" height="42" rx="21" fill="#ecfdf5" stroke="#a7f3d0"/><circle cx="1395" cy="68" r="6" fill="#10b981"/><text x="1460" y="74" class="tag" text-anchor="middle" fill="#047857">V2.2</text>
 
-  <rect class="phase" x="375" y="62" width="350" height="56"/><text class="label" x="550" y="96">F1 · Intake y perfil</text>
-  <polygon class="gate" points="550,144 690,190 550,236 410,190"/><text class="label" x="550" y="186">G0 · Integridad</text><text class="small" x="550" y="207">baseline · autoridad · perfil</text>
-  <rect class="phase" x="375" y="270" width="350" height="62"/><text class="label" x="550" y="298">F2 · Alcance y diseño</text><text class="small" x="550" y="319">G1 · aceptación y rollback</text>
-  <rect class="phase" x="375" y="366" width="350" height="56"/><text class="label" x="550" y="400">F3 · Preflight</text>
-  <rect class="phase" x="375" y="456" width="350" height="56"/><text class="label" x="550" y="490">F4 · Implementación incremental</text>
-  <rect class="phase" x="375" y="546" width="350" height="68"/><text class="label" x="550" y="574">F5 · Verificación automatizada</text><text class="small" x="550" y="597">G2 · G3 · G4 · G6 condicional</text>
-  <rect class="phase" x="375" y="648" width="350" height="62"/><text class="label" x="550" y="676">F6 · QA y aceptación</text><text class="small" x="550" y="697">G5 · conducta observable</text>
-  <rect class="phase" x="375" y="744" width="350" height="62"/><text class="label" x="550" y="772">F7 · Integración y deploy</text><text class="small" x="550" y="793">G7 · G8 si aplica</text>
-  <rect class="phase" x="375" y="840" width="350" height="62"/><text class="label" x="550" y="868">F8 · Cierre y aprendizaje</text><text class="small" x="550" y="889">G9 · fuentes, métricas y deuda</text>
-  <rect class="state" x="410" y="956" width="280" height="58"/><text class="label" x="550" y="990">CLOSED_VERIFIED</text>
+  <rect x="55" y="165" width="1490" height="250" rx="24" class="lane"/>
+  <text x="85" y="203" class="tag">01 · PREPARACIÓN</text>
+  <rect x="90" y="235" width="285" height="125" rx="18" class="phase" filter="url(#shadow)"/>
+  <circle cx="120" cy="258" r="17" fill="#dbeafe"/><text x="120" y="264" class="label" fill="#1d4ed8">F1</text><text x="232" y="288" class="h">Intake y perfil</text><text x="232" y="314" class="small">baseline · autoridad · entorno</text><rect x="165" y="326" width="135" height="26" rx="13" class="gate"/><text x="232" y="345" class="label" fill="#92400e">G0 · integridad</text>
+  <rect x="455" y="235" width="285" height="125" rx="18" class="phase" filter="url(#shadow)"/>
+  <circle cx="485" cy="258" r="17" fill="#dbeafe"/><text x="485" y="264" class="label" fill="#1d4ed8">F2</text><text x="598" y="288" class="h">Alcance y diseño</text><text x="598" y="314" class="small">aceptación · riesgos · rollback</text><rect x="530" y="326" width="135" height="26" rx="13" class="gate"/><text x="598" y="345" class="label" fill="#92400e">G1 · alcance</text>
+  <rect x="820" y="235" width="285" height="125" rx="18" class="phase" filter="url(#shadow)"/>
+  <circle cx="850" cy="258" r="17" fill="#dbeafe"/><text x="850" y="264" class="label" fill="#1d4ed8">F3</text><text x="962" y="288" class="h">Preflight</text><text x="962" y="314" class="small">Git · Docker · datos · permisos</text><rect x="887" y="326" width="150" height="26" rx="13" fill="#f1f5f9" stroke="#cbd5e1"/><text x="962" y="345" class="label">condición de inicio</text>
+  <rect x="1185" y="235" width="285" height="125" rx="18" class="phase" filter="url(#shadow)"/>
+  <circle cx="1215" cy="258" r="17" fill="#dbeafe"/><text x="1215" y="264" class="label" fill="#1d4ed8">F4</text><text x="1328" y="288" class="h">Implementación</text><text x="1328" y="314" class="small">incrementos pequeños · evidencia</text><rect x="1255" y="326" width="145" height="26" rx="13" fill="#f1f5f9" stroke="#cbd5e1"/><text x="1328" y="345" class="label">cambio controlado</text>
+  <path d="M375 297h80M740 297h80M1105 297h80" class="line"/>
 
-  <rect class="loop" x="790" y="566" width="260" height="104"/><text class="label" x="920" y="598">Defecto</text><text class="small" x="920" y="622">reproducir · clasificar · corregir</text><text class="small" x="920" y="644">prueba · regresión · revalidación</text>
-  <rect class="blocked" x="50" y="350" width="270" height="110"/><text class="label" x="185" y="382">Anomalía material</text><text class="small" x="185" y="407">contener · alternativas · decisión</text><text class="small" x="185" y="431">reanudar, escalar o cancelar</text>
+  <rect x="55" y="450" width="1490" height="250" rx="24" class="lane"/>
+  <text x="85" y="488" class="tag">02 · ASEGURAMIENTO Y ENTREGA</text>
+  <rect x="1185" y="520" width="285" height="125" rx="18" class="phase" filter="url(#shadow)"/>
+  <circle cx="1215" cy="543" r="17" fill="#dbeafe"/><text x="1215" y="549" class="label" fill="#1d4ed8">F5</text><text x="1328" y="573" class="h">Verificación</text><text x="1328" y="599" class="small">lint · types · tests · build</text><rect x="1235" y="611" width="185" height="26" rx="13" class="gate"/><text x="1328" y="630" class="label" fill="#92400e">G2 · G3 · G4 · G6</text>
+  <rect x="820" y="520" width="285" height="125" rx="18" class="phase" filter="url(#shadow)"/>
+  <circle cx="850" cy="543" r="17" fill="#dbeafe"/><text x="850" y="549" class="label" fill="#1d4ed8">F6</text><text x="962" y="573" class="h">QA y aceptación</text><text x="962" y="599" class="small">conducta observable · evidencia</text><rect x="895" y="611" width="135" height="26" rx="13" class="gate"/><text x="962" y="630" class="label" fill="#92400e">G5 · aceptación</text>
+  <rect x="455" y="520" width="285" height="125" rx="18" class="phase" filter="url(#shadow)"/>
+  <circle cx="485" cy="543" r="17" fill="#dbeafe"/><text x="485" y="549" class="label" fill="#1d4ed8">F7</text><text x="598" y="573" class="h">Integración y deploy</text><text x="598" y="599" class="small">PR · checks · smoke · rollback</text><rect x="520" y="611" width="155" height="26" rx="13" class="gate"/><text x="598" y="630" class="label" fill="#92400e">G7 · G8 si aplica</text>
+  <rect x="90" y="520" width="285" height="125" rx="18" class="phase" filter="url(#shadow)"/>
+  <circle cx="120" cy="543" r="17" fill="#dbeafe"/><text x="120" y="549" class="label" fill="#1d4ed8">F8</text><text x="232" y="573" class="h">Cierre y aprendizaje</text><text x="232" y="599" class="small">fuentes · métricas · deuda</text><rect x="165" y="611" width="135" height="26" rx="13" class="gate"/><text x="232" y="630" class="label" fill="#92400e">G9 · cierre</text>
+  <path d="M1328 360v100c0 25 0 35 0 60" class="line"/><path d="M1185 582h-80M820 582h-80M455 582h-80" class="line"/>
 
-  <path class="line" d="M550 118 L550 144"/><path class="line" d="M550 236 L550 270"/><path class="line" d="M550 332 L550 366"/><path class="line" d="M550 422 L550 456"/><path class="line" d="M550 512 L550 546"/><path class="line" d="M550 614 L550 648"/><path class="line" d="M550 710 L550 744"/><path class="line" d="M550 806 L550 840"/><path class="line" d="M550 902 L550 956"/>
-  <path class="fail" d="M725 580 C760 580 760 610 790 610"/><path class="fail" d="M725 680 C765 680 760 640 790 640"/><path class="fail" d="M920 566 C920 520 760 520 725 568"/>
-  <path class="warn" d="M410 190 C250 190 185 260 185 350"/><path class="warn" d="M375 394 L320 394"/><path class="warn" d="M320 405 C340 405 350 394 375 394"/>
-  <text class="small" x="590" y="253">PASS</text><text class="small" x="756" y="565">FAIL</text><text class="small" x="760" y="700">FAIL</text><text class="small" x="306" y="184">BLOCKED</text>
+  <rect x="90" y="765" width="285" height="115" rx="18" class="state" filter="url(#shadow)"/>
+  <circle cx="130" cy="807" r="22" fill="#d1fae5"/><path d="M120 807l7 7 14-16" fill="none" stroke="#047857" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="242" y="811" class="h">CLOSED_VERIFIED</text><text x="242" y="842" class="small">resultado y evidencia preservados</text>
+  <path d="M232 645v120" class="line"/>
+
+  <rect x="520" y="765" width="420" height="115" rx="18" class="warn"/>
+  <circle cx="565" cy="807" r="22" fill="#ffedd5"/><path d="M565 791l16 29h-32z" fill="#f97316"/><rect x="563" y="800" width="4" height="10" rx="2" fill="#fff"/><circle cx="565" cy="815" r="2" fill="#fff"/>
+  <text x="730" y="803" class="h">Anomalía material</text><text x="730" y="833" class="body">contener · evaluar alternativas · decidir</text><text x="730" y="858" class="small">reanudar, escalar o cancelar sin maquillar el gate</text>
+  <path d="M962 360v95c0 25-177 15-177 65v170c0 35-55 42-55 75" class="fail"/>
+
+  <rect x="1080" y="765" width="420" height="115" rx="18" class="defect"/>
+  <circle cx="1125" cy="807" r="22" fill="#ffe4e6"/><path d="M1117 799l16 16M1133 799l-16 16" stroke="#be123c" stroke-width="4" stroke-linecap="round"/>
+  <text x="1290" y="803" class="h">Bucle de defecto</text><text x="1290" y="833" class="body">reproducir · clasificar · corregir</text><text x="1290" y="858" class="small">prueba específica + regresión + revalidación</text>
+  <path d="M1328 645v120" class="fail"/><path d="M1080 823c-70 0-85-120-118-178" class="fail"/>
+
+  <rect x="55" y="925" width="1490" height="45" rx="14" fill="#0f172a"/>
+  <circle cx="90" cy="947" r="5" fill="#60a5fa"/><text x="108" y="953" class="small" style="text-anchor:start" fill="#cbd5e1">PASS avanza</text>
+  <circle cx="265" cy="947" r="5" fill="#fbbf24"/><text x="283" y="953" class="small" style="text-anchor:start" fill="#cbd5e1">gate decide</text>
+  <circle cx="455" cy="947" r="5" fill="#fb7185"/><text x="473" y="953" class="small" style="text-anchor:start" fill="#cbd5e1">FAIL corrige o contiene</text>
+  <text x="1500" y="953" class="small" style="text-anchor:end" fill="#cbd5e1">Sin publicación ni deploy sin evidencia proporcional</text>
 </svg>
